@@ -2,8 +2,12 @@ const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client } =
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('server')
-		.setDescription('Provides information about the server.'),
+		.setName('join')
+		.setDescription('Join the your voice channel!')
+		.addChannelOption(channel =>
+			channel.setName('channel')
+			.setDescription('What channel you me to join?')),
+
 	/**
 	 * 
 	 * @param {Client} client
@@ -11,7 +15,6 @@ module.exports = {
 	 */
 			
 	async execute(client , interaction) {	
-		// interaction.guild is the object representing the Guild in which the command was run
-		await interaction.reply(`This server is ${interaction.guild.name} and has ${interaction.guild.memberCount} members.`);
+		await interaction.reply('This is join command:)))) updating....');
 	},
 };

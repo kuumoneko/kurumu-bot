@@ -2,8 +2,8 @@ const { SlashCommandBuilder, Client, CommandInteraction } = require('discord.js'
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('ping')
-		.setDescription('Replies with Pong!'),
+		.setName('bans')
+		.setDescription('See bans list and unban member!'),
 	/**
 	 * 
 	 * @param {Client} client
@@ -11,6 +11,6 @@ module.exports = {
 	 */
 			
 	async execute(client , interaction) {	
-		await interaction.reply('Pong!');
+		await interaction.reply('This is bans command:)))) updating....');
 	},
 };
