@@ -35,7 +35,7 @@ module.exports = {
 			return
 		}
 
-	    await TargetMember.ban({reason: reason})
+	    await targetMember.ban({reason: reason})
 
 
 		await interaction.reply('This is Ban command:)))) updating....');

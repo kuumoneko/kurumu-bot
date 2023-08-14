@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, Client, CommandInteraction } = require('discord.js');
+const { SlashCommandBuilder, Client, CommandInteraction, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -10,7 +10,8 @@ module.exports = {
 			.setRequired(true))
 		.addStringOption(reason =>
 			reason.setName('reason')
-			.setDescription('Why you want to do to that?')),
+			.setDescription('Why you want to do to that?'))
+		.setDefaultMemberPermissions(PermissionFlagsBits.KickMembers),
 	/**
 	 * 
 	 * @param {Client} client
@@ -18,6 +19,36 @@ module.exports = {
 	 */
 			
 	async execute(client , interaction) {	
-		await interaction.reply('This is kick command:)))) updating....');
+		const mb = interaction.options.getUser('member')
+		const reason = interaction.options.getString('reason')
+
+		var Target = interaction.guild.members.cache.find(member => member.id === mb.id);
+		var user = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
+		var clientt = interaction.guild.members.cache.find(member => member.id === client.user.id);
+
+		if (clientt.roles.highest.position <= Target.roles.highest.position)
+		{
+			await interaction.reply(`I can't do this action :<`)
+			return;
+		}
+
+		if (user.roles.highest.position > Target.roles.highest.position)
+		{
+			Target.kick({
+				reason : reason,
+			})
+
+			await interaction.reply({
+				content : `Done`,
+				ephemeral : true,
+			})
+
+			await interaction.channel.send(`${Target} has been kicked by ${interaction.user} with reason: ${reason}`)
+
+			return 
+		}
+
+
+		await interaction.reply(`You can't do this action :<`)
 	},
 };

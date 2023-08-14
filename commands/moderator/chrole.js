@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, Client, CommandInteraction } = require('discord.js');
+const { SlashCommandBuilder, Client, CommandInteraction, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -10,7 +10,8 @@ module.exports = {
 			.setRequired(true))
 		.addRoleOption(role =>
 			role.setName('role')
-			.setDescription('What role you want to change?')),
+			.setDescription('What role you want to change?'))
+		.setDefaultMemberPermissions(PermissionFlagsBits.ChangeNickname),
 			
 	/**
 	 * 
