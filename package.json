@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@discordjs/voice": "^0.16.0",
+    "child_process": "^1.0.2",
+    "collections": "^5.1.13",
+    "discord.js": "^14.12.1",
+    "mysql": "^2.18.1",
+    "pynode": "^0.2.0",
+    "python": "^0.0.4"
+  }
+}

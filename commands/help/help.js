@@ -5,15 +5,15 @@ module.exports = {
 		.setName('help')
 		.setDescription('Help for user from kurumu!')
 		.addStringOption(command_help =>
-				command_help.setName('command_helped')
+			command_help.setName('command_helped')
 				.setDescription('What command do you want to help?')),
 	/**
 	 * 
-	 * @param {Client} client
+	 * 
 	 * @param {CommandInteraction} interaction
 	 */
-			
-	async execute(client , interaction) {	
+
+	async execute(client, interaction) {
 		await interaction.reply('This is Help command:)))) updating....');
 	},
 };

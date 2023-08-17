@@ -1,4 +1,4 @@
-const { EmbedBuilder , ActionRowBuilder , StringSelectMenuOptionBuilder} = require('@discordjs/builders');
+const { EmbedBuilder, ActionRowBuilder, StringSelectMenuOptionBuilder } = require('@discordjs/builders');
 const { SlashCommandBuilder, Client, CommandInteraction, PermissionFlagsBits, Embed, StringSelectMenuBuilder } = require('discord.js');
 // const {Em} = require('discord.js');
 
@@ -9,7 +9,7 @@ module.exports = {
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 	/**
 	 * 
-	 * @param {Client} client
+	 * 
 	 * @param {CommandInteraction} interaction
 	 */
 

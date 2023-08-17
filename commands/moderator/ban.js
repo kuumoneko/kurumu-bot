@@ -7,21 +7,21 @@ module.exports = {
 
 		.addUserOption(member =>
 			member.setName('member')
-			.setDescription('Who do you want to call?')
-			.setRequired(true))
+				.setDescription('Who do you want to call?')
+				.setRequired(true))
 
 		.addStringOption(reason =>
 			reason.setName('reason')
-			.setDescription('Why you want to do to that?'))
+				.setDescription('Why you want to do to that?'))
 		.setDefaultMemberPermissions(PermissionFlagsBits.BanMembers),
 
 	/**
 	 * 
-	 * @param {Client} client
+	 * 
 	 * @param {CommandInteraction} interaction
 	 */
-			
-	async execute(client , interaction) {	
+
+	async execute(client, interaction) {
 		const mb = interaction.options.getUser('member')
 		const reason = interaction.options.getString('reason')
 
@@ -29,13 +29,12 @@ module.exports = {
 		const targetMember = interaction.guild.members.cache.find(member => member.id === mb.id)
 
 
-		if (AuthorMember.roles.highest.position <= targetMember.roles.highest.position)
-		{
+		if (AuthorMember.roles.highest.position <= targetMember.roles.highest.position) {
 			await interaction.reply(`You can't do this :))`)
 			return
 		}
 
-	    await targetMember.ban({reason: reason})
+		await targetMember.ban({ reason: reason })
 
 
 		await interaction.reply('This is Ban command:)))) updating....');

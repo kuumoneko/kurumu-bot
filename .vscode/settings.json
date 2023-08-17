@@ -59,7 +59,7 @@
     {
         "diffEditor.ignoreTrimWhitespace": false,
         "editor.wordBasedSuggestions": false,
-        "editor.defaultFormatter": "vscode.github"
+        "editor.defaultFormatter": "ms-python.python"
     },
 
     
@@ -68,7 +68,8 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.formatting.provider": "none",
+    "python.formatting.provider": "autopep8",
+    
     "files.associations": {
         "iostream": "cpp",
         "ostream": "cpp",

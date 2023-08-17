@@ -1,5 +1,9 @@
 # Kurumu discord bot
 
-# Version 0.0.2
+# Version 0.0.3
 
-> Add Some command in `moderator`
+> Change Some command in `moderator`
+
+> Add Some command in `music`
+
+> Add `chat` command in `AI`

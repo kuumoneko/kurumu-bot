@@ -1,9 +1,12 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, Message } = require('discord.js');
+const aclient = require('./src/aclient.js')
 // const { token } = require('./config.json');
 
-const kclient = new Client({ intents: [GatewayIntentBits.Guilds] });
+// const
+
+const kclient = new aclient()
 
 const { REST, Routes } = require('discord.js');
 const { clientId, guildId, token } = require('./config.json');
@@ -51,7 +54,7 @@ const rest = new REST().setToken(token);
 	}
 })();
 
-kclient.commands = new Collection();
+kclient.client.commands = new Collection();
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -61,7 +64,7 @@ for (const file of commandFiles) {
 	const command = require(filePath);
 	// Set a new item in the Collection with the key as the command name and the value as the exported module
 	if ('data' in command && 'execute' in command) {
-		kclient.commands.set(command.data.name, command);
+		kclient.client.commands.set(command.data.name, command);
 	} else {
 		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 	}
@@ -79,14 +82,14 @@ for (const folder of Folderss) {
 		const filePath = path.join(commandsPath, file);
 		const command = require(filePath);
 		if ('data' in command && 'execute' in command) {
-			kclient.commands.set(command.data.name , command)
+			kclient.client.commands.set(command.data.name , command)
 		} else {
 			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 		}
 	}
 }
 
-kclient.on(Events.InteractionCreate, async interaction => {
+kclient.client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
 
 	const command = interaction.client.commands.get(interaction.commandName);
@@ -109,13 +112,13 @@ kclient.on(Events.InteractionCreate, async interaction => {
 });
 
 
-kclient.on("ready", () => {
-    console.log(`Logged in as ${kclient.user.tag}!`)
+kclient.client.on("ready", () => {
+    console.log(`Logged in as ${kclient.client.user.tag}!`)
   })
-kclient.on("message", () => {
+kclient.client.on("message", () => {
     console.log('msg')
   } )
 
 
-// Log in to Discord with your kclient's token
-kclient.login(token);
+// Log in to Discord with your kclient.client's token
+kclient.client.login(token);

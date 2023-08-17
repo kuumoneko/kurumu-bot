@@ -6,7 +6,7 @@ const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client } =
 // 		.setDescription('A function , not command=))!'),
 // // 	/**
 // 	 * 
-// 	 * @param {Client} client
+// 	 * 
 // 	 * @param {CommandInteraction} interaction 
 // 	 */
 			

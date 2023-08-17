@@ -6,11 +6,11 @@ module.exports = {
 		.setDescription('Replies with Pong!'),
 	/**
 	 * 
-	 * @param {Client} client
+	 * 
 	 * @param {CommandInteraction} interaction
 	 */
-			
-	async execute(client , interaction) {	
-		await interaction.reply('Pong!');
+
+	async execute(client, interaction) {
+		await interaction.reply(`Pong! Now , Ping of Kurumu is ${Date.now() - interaction.createdTimestamp}ms. API Latency is ${Math.round(client.client.ws.ping)}ms`);
 	},
 };

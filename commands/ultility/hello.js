@@ -6,11 +6,11 @@ module.exports = {
 		.setDescription('Helo!'),
 	/**
 	 * 
-	 * @param {Client} client
+	 * 
 	 * @param {CommandInteraction} interaction 
 	 */
-			
-	async execute(client , interaction) {	
+
+	async execute(client, interaction) {
 		await interaction.reply('This is hello command:)))) updating....');
 	},
 };

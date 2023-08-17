@@ -9,39 +9,39 @@ module.exports = {
 
 		.addUserOption(option =>
 			option.setName('member')
-			.setDescription('Who do you want to call?')
-			.setRequired(true))
+				.setDescription('Who do you want to call?')
+				.setRequired(true))
 
 		.addIntegerOption(option =>
 			option.setName('time')
-			.setRequired(true)
-			.setDescription('How long you want to timeout?'))	
+				.setRequired(true)
+				.setDescription('How long you want to timeout?'))
 		.addStringOption(option =>
 			option.setName('value')
-			.setDescription('Time Unit')
-			.setRequired(true)
-			.addChoices(
-				{name: 'Seconds' , value : 'Seconds'},
-				{name: 'Minutes' , value : 'Minutes'},
-				{name: 'Hours' , value : 'Hours'},
-				{name: 'Days' , value : 'Days'},
-				{name: 'Weeks' , value : 'Weeks'},
-			))
+				.setDescription('Time Unit')
+				.setRequired(true)
+				.addChoices(
+					{ name: 'Seconds', value: 'Seconds' },
+					{ name: 'Minutes', value: 'Minutes' },
+					{ name: 'Hours', value: 'Hours' },
+					{ name: 'Days', value: 'Days' },
+					{ name: 'Weeks', value: 'Weeks' },
+				))
 
 		.addStringOption(option =>
 			option.setName('reason')
-			.setDescription('Why you want to do to that?'))
+				.setDescription('Why you want to do to that?'))
 
 		.setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
-		
+
 
 	/**
 	 * 
-	 * @param {Client} client
+	 * 
 	 * @param {CommandInteraction} interaction
 	 */
-			
-	async execute(client , interaction) {	
+
+	async execute(client, interaction) {
 		var mb = interaction.options.getUser('member');
 		var time = interaction.options.getInteger('time');
 		var value = interaction.options.getString('value');
@@ -55,36 +55,30 @@ module.exports = {
 		const targetMember = interaction.guild.members.cache.find(member => member.id === mb.id)
 
 
-		if (AuthorMember.roles.highest.position <= targetMember.roles.highest.position)
-		{
+		if (AuthorMember.roles.highest.position <= targetMember.roles.highest.position) {
 			await interaction.reply(`You can't do this :))`)
 			return
 		}
 
-		if (value == 'Seconds')
-		{
+		if (value == 'Seconds') {
 			temp += time;
 		}
-		else if (value == 'Minutes')
-		{
+		else if (value == 'Minutes') {
 			temp += time * 60;
 		}
-		else if (value == 'Hours')
-		{
+		else if (value == 'Hours') {
 			temp += time * 60 * 60;
 		}
-		else if (value == 'Days')
-		{
+		else if (value == 'Days') {
 			temp += time * 60 * 60 * 24;
 		}
-		else
-		{
-			temp += time * 60 * 60 * 24 *7;
+		else {
+			temp += time * 60 * 60 * 24 * 7;
 		}
 
 
-	  	await targetMember.timeout(temp * 1000 ,reason )
-		
+		await targetMember.timeout(temp * 1000, reason)
+
 		return await interaction.reply(`${mb} has been timeouted by ${interaction.user} in ${time} ${value} with reason: ${reason}`);
 	},
 };
