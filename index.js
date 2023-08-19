@@ -1,17 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, Message } = require('discord.js');
-const aclient = require('./src/aclient.js')
-// const { token } = require('./config.json');
-
-// const
+const aclient = require('./src/aclient.js');
+const { REST, Routes } = require('discord.js');
+const { clientId, token } = require('./config.json');
 
 const kclient = new aclient()
-
-const { REST, Routes } = require('discord.js');
-const { clientId, guildId, token } = require('./config.json');
-// const fs = require('node:fs');
-// const path = require('node:path');
 
 const commands = [];
 // Grab all the command files from the commands directory you created earlier

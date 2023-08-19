@@ -3,7 +3,11 @@
     "@discordjs/voice": "^0.16.0",
     "child_process": "^1.0.2",
     "collections": "^5.1.13",
+    "discord-youtube-api": "^0.1.0",
     "discord.js": "^14.12.1",
+    "gapi": "^0.0.3",
+    "google-auth-library": "^9.0.0",
+    "googleapis": "^126.0.0",
     "mysql": "^2.18.1",
     "pynode": "^0.2.0",
     "python": "^0.0.4"
