@@ -5,7 +5,22 @@ const aclient = require('./src/aclient.js');
 const { REST, Routes } = require('discord.js');
 const { clientId, token } = require('./config.json');
 
+const { generateDependencyReport } = require('@discordjs/voice');
+const { SpotifyExtractor, YouTubeExtractor, SoundCloudExtractor } = require('@discord-player/extractor')
+
+// console.log(generateDependencyReport());
+
+
 const kclient = new aclient()
+
+async function check(client) {
+	await client.player.extractors.loadDefault();
+	await client.player.extractors.register(SpotifyExtractor, {});
+	await client.player.extractors.register(SoundCloudExtractor, {});
+	await client.player.extractors.register(YouTubeExtractor, {});
+}
+
+check(kclient)
 
 const commands = [];
 // Grab all the command files from the commands directory you created earlier
@@ -20,7 +35,7 @@ for (const folder of commandFolders) {
 	for (const file of commandFiles) {
 		const filePath = path.join(commandsPath, file);
 		const command = require(filePath);
-		
+
 		if ('data' in command && 'execute' in command) {
 			commands.push(command.data.toJSON());
 		}
@@ -34,12 +49,12 @@ const rest = new REST().setToken(token);
 (async () => {
 	try {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`);
-		
+
 		// The put method is used to fully refresh all commands in the guild with the current set
 		const data = await rest.put(
-            Routes.applicationCommands(clientId),
-            { body: commands },
-        );
+			Routes.applicationCommands(clientId),
+			{ body: commands },
+		);
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {
@@ -76,7 +91,7 @@ for (const folder of Folderss) {
 		const filePath = path.join(commandsPath, file);
 		const command = require(filePath);
 		if ('data' in command && 'execute' in command) {
-			kclient.client.commands.set(command.data.name , command)
+			kclient.client.commands.set(command.data.name, command)
 		} else {
 			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 		}
@@ -94,7 +109,7 @@ kclient.client.on(Events.InteractionCreate, async interaction => {
 	}
 
 	try {
-		await command.execute(kclient , interaction);
+		await command.execute(kclient, interaction);
 	} catch (error) {
 		console.error(error);
 		if (interaction.replied || interaction.deferred) {
@@ -107,11 +122,11 @@ kclient.client.on(Events.InteractionCreate, async interaction => {
 
 
 kclient.client.on("ready", () => {
-    console.log(`Logged in as ${kclient.client.user.tag}!`)
-  })
+	console.log(`Logged in as ${kclient.client.user.tag}!`)
+})
 kclient.client.on("message", () => {
-    console.log('msg')
-  } )
+	console.log('msg')
+})
 
 
 // Log in to Discord with your kclient.client's token

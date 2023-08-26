@@ -28,11 +28,16 @@ class YouTube {
 		if (!!id && this.testID(id)) return await this.getVideoByID(id);
 		else throw new Error("Cannot resolve video ID");
 	}
-
+	/**
+	 * 
+	 * @param {string} query 
+	 * @returns 
+	 */
 	async searchVideos(query) {
 		const max = 10;
 		const part = "snippet";
 		const type = "video";
+		query = query.replace(/ /g , '+')
 		try {
 			const temp = `${this.base}/search?part=${part}&key=${this.key}&maxResults=${max}&type=${type}&q=${query}`
 			const res = await snekfetch.get(temp);
@@ -96,7 +101,7 @@ class YouTube {
 				
 			));
 			videos.forEach(item => {
-								vids.push(videos)
+								vids.push(item)
 							})
 
 		} catch (err) {

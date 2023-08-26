@@ -23,9 +23,6 @@ mode = "Bard"
 
 
 async def testing(mess, mode):
-    # mode = int(mode)
-    # print(mode)
-    # start = datetime.now()
 
     output: str = ""
 

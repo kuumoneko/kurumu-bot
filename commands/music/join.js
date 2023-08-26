@@ -11,48 +11,43 @@ module.exports = {
 	 */
 
 	async execute(client, interaction) {
+		await interaction.deferReply({
+			ephemeral: true,
+		})
 
 		const guild = client.client.guilds.cache.get(interaction.guildId);
 		// Get the member from the guild
 		const member = guild.members.cache.get(interaction.user.id);
-
-		// cn = interaction.member.voice.channel
 		const voiceChannel = member.voice.channel;
 
 		if (voiceChannel) {
 			// Join the same voice channel as the user
 			try {
-				const connection = joinVoiceChannel({
+				const moi = joinVoiceChannel({
 					channelId: voiceChannel.id,
-					guildId: interaction.guildId,
-					adapterCreator: interaction.guild.voiceAdapterCreator,
+					guildId: guild.id,
+					adapterCreator: guild.voiceAdapterCreator,
 				});
-
-				await interaction.reply({
-					content: `I have joined ${voiceChannel}. Let's play something`,
-					ephemeral: true,
+				// return "Done";
+				await interaction.followUp({
+					content: `I have joined to ${voiceChannel}`,
+					ephemeral : true,
 				})
-
-				return
 
 			}
 			catch (error) {
-				await interaction.reply({
-					content: `Something was wrong, please call Kuumo for help.\nError: ${error.message}`,
+				await interaction.followUp({
+					content: `Something was wrong, please call Kuumo for help.\nError: ${error}`,
 					ephemeral: true,
 				})
-				return
 			}
-
-
-
 		}
 		else {
 			await interaction.reply({
-				content: `I can't find your voice channel :< , please try again`,
-				ephemeral: true,
-			})
-			return
+					content: `I can't find your voice channel :< , please try again`,
+					ephemeral: true,
+				})
 		}
-	},
+
+	}
 };

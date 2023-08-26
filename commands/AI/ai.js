@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, Client, CommandInteraction } = require('discord.js');
 const { spawn } = require('child_process');
-const { Getresponse } = require('../AI/chatbot.js')
+const { Getresponse } = require('./chatbot')
 
 module.exports = {
 	data: new SlashCommandBuilder()

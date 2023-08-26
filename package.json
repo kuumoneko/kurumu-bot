@@ -1,15 +1,29 @@
 {
   "dependencies": {
+    "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.16.0",
     "child_process": "^1.0.2",
     "collections": "^5.1.13",
+    "discord-player": "^6.6.2",
     "discord-youtube-api": "^0.1.0",
-    "discord.js": "^14.12.1",
+    "discord.js": "^14.13.0",
+    "ffmpeg": "^0.0.4",
+    "ffmpeg-static": "^5.2.0",
+    "fluent-ffmpeg": "^2.1.2",
     "gapi": "^0.0.3",
     "google-auth-library": "^9.0.0",
     "googleapis": "^126.0.0",
+    "got": "^13.0.0",
+    "libsodium-wrappers": "^0.7.11",
     "mysql": "^2.18.1",
+    "node-addon-api": "^7.0.0",
+    "opusscript": "^0.0.8",
+    "play-audio": "^0.5.2",
+    "play-dl": "^1.9.6",
     "pynode": "^0.2.0",
-    "python": "^0.0.4"
+    "python": "^0.0.4",
+    "sodium-native": "^4.0.4",
+    "tweetnacl": "^1.0.3",
+    "ytdl-core": "^4.11.5"
   }
 }

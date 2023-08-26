@@ -1,122 +1,136 @@
-const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client } = require('discord.js');
-const { joinVoiceChannel } = require('@discordjs/voice');
-const {add_to_queue} = require('./add_to_queue/__add_to_queue__')
+const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client, IntentsBitField } = require('discord.js');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, getVoiceConnection, AudioPlayerStatus, entersState } = require('@discordjs/voice');
+const ytdl = require('ytdl-core');
+const _ = require("lodash");
+const { add_to_queue } = require('./add_to_queue/__add_to_queue__');
+const { QueryType, useQueue, useMainPlayer } = require('discord-player')
+
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('play')
-		.setDescription('Play music!')
-		.addStringOption(prompt =>
-			prompt.setName('prompt')
-				.setDescription('Youtube link or search on Youtube'))
-		.addBooleanOption(isloop =>
-			isloop.setName('isloop')
-				.setDescription('Do you want to repeat your track?'))
-		.addStringOption(shuffle =>
-			shuffle.setName('shuffle')
-				.setDescription('What mode you want to shuffle or None')),
+    data: new SlashCommandBuilder()
+        .setName('play')
+        .setDescription('Play music!')
+        .addStringOption(prompt =>
+            prompt.setName('prompt')
+                .setDescription('link or query'))
+        .addBooleanOption(isshuffle =>
+            isshuffle.setName('isshuffle')
+                    .setDescription('Do you want to shuffle the queue?')) 
+        .addStringOption(mode =>
+            mode.setName('mode')
+                .setDescription('set your search mode(only use for search query)')
+                .addChoices(
+                    { name: 'Youtube', value: "youtube" },
+                    { name: 'Spotify', value: "spotify" },
+                    { name: 'Soundcloud', value: "soundcloud" },
+                )),
 
-	/**
-	 * 
-	 * 
-	 * @param {CommandInteraction} interaction 
-	 */
+    /**
+     * 
+     * 
+     * @param {CommandInteraction} interaction 
+     */
 
-  async execute(client, interaction) {
-    await interaction.deferReply({
-      ephemeral : true,
-    })
-    const prompt = interaction.options.getString('prompt');
-    const isloop = interaction.options.getBoolean('isloop');
-    const shuffle = interaction.options.getString('shuffle');
+    async execute(client, interaction) {
+        await interaction.deferReply({
+            ephemeral: true,
+        })
 
-    await add_to_queue(client , interaction  , prompt)
+        var prompt = interaction.options.getString('prompt');
+        // const isloop = interaction.options.getBoolean('isloop');
+        const shuffle = interaction.options.getBoolean('shuffle');
+        const mode = interaction.options.getString('mode') ?? 'None';
+        const id = interaction.guildId;
+        const VoiceChannel = interaction.member.voice.channel;
 
-		await interaction.followUp('This is play command:)))) updating....');
-	},
+        if (!VoiceChannel) {
+            await interaction.followUp({
+                content: `Please join a voice channel first :<`,
+                ephemeral: true
+            })
+        }
+
+        const player = useMainPlayer();
+
+        var moi = "ksdjnkd";
+
+        // moi.search(-1)
+        if (prompt.search('youtu') != -1 || prompt.search('spotify') != -1 || prompt.search('soundclound') != -1) {
+            await interaction.followUp({
+                content: `Track(s) have been added to queue`,
+                ephemeral: true,
+            });
+            if (prompt.search('&feature=shared') != -1) {
+                prompt = prompt.split('&feature=shared')[0];
+
+            }
+
+            await player.play(VoiceChannel, prompt, {
+                requestedBy: interaction.user,
+                nodeOptions: {
+                    leaveOnEmpty: true,
+                    leaveOnEmptyCooldown: 300_000,
+                    leaveOnEnd: true,
+                    leaveOnEndCooldown: 300_000,
+                    leaveOnStop: true,
+                    leaveOnStopCooldown: 300_000,
+                    maxSize: 1000,
+                    maxHistorySize: 100,
+                    volume: 50,
+                    bufferingTimeout: 3000,
+                    connectionTimeout: 30000,
+                    metadata: {
+                        channel: interaction.channel,
+                        client: interaction.client,
+                        requestedBy: interaction.user,
+                        // track: searchResult.tracks[0]
+                    }
+                }
+            });
+
+        }
+        else {
+            const trackk = await add_to_queue(client, interaction, prompt, mode);
+
+            if (trackk == 'None')
+                return;
+            
+            await player.play(VoiceChannel, trackk, {
+                requestedBy: interaction.user,
+                nodeOptions: {
+                    leaveOnEmpty: true,
+                    leaveOnEmptyCooldown: 300_000,
+                    leaveOnEnd: true,
+                    leaveOnEndCooldown: 300_000,
+                    leaveOnStop: true,
+                    leaveOnStopCooldown: 300_000,
+                    maxSize: 1000,
+                    maxHistorySize: 100,
+                    volume: 50,
+                    bufferingTimeout: 3000,
+                    connectionTimeout: 30000,
+                    metadata: {
+                        channel: interaction.channel,
+                        client: interaction.client,
+                        requestedBy: interaction.user,
+                        // track: searchResult.tracks[0]
+                    }
+                }
+            });
+
+        }
+
+        const queue = useQueue(interaction.guildId);
+
+        queue.tracks.shuffle();
+        
+        if (!interaction.member.voice.channel) {
+            await interaction.followUp({
+                content: `Please join a voice channel first :<`,
+                ephemeral: true,
+            });
+
+        }
+
+
+    }
 };
-
-/**
- * 
- 
-// Require the necessary packages and modules
-const Discord = require ('discord.js');
-const ytdl = require ('ytdl-core');
-const ffmpeg = require ('ffmpeg');
-
-// Create a new Discord client
-const client = new Discord.Client ();
-
-// Define a prefix for the bot commands
-const prefix = '!';
-
-// Log in the bot using your token
-client.login ('your-token-here');
-
-// Listen for ready event
-client.on ('ready', () => {
-  console.log (`Logged in as ${client.user.tag}!`);
-});
-
-// Listen for message event
-client.on ('message', async message => {
-  // Ignore messages that are not commands or from other bots
-  if (!message.content.startsWith (prefix) || message.author.bot) return;
-
-  // Split the message into arguments
-  const args = message.content.slice (prefix.length).trim ().split (/ +/);
-  // Get the first argument as the command name
-  const command = args.shift ().toLowerCase ();
-
-  // Handle the play command
-  if (command === 'play') {
-    // Check if the user provided a valid YouTube URL
-    if (!ytdl.validateURL (args [0])) {
-      return message.channel.send ('Please provide a valid YouTube URL.');
-    }
-
-    // Check if the user is in a voice channel
-    const voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) {
-      return message.channel.send ('You need to be in a voice channel to play music.');
-    }
-
-    // Check if the bot has permission to join and speak in the voice channel
-    const permissions = voiceChannel.permissionsFor (message.client.user);
-    if (!permissions.has ('CONNECT') || !permissions.has ('SPEAK')) {
-      return message.channel.send ('I need permission to join and speak in your voice channel.');
-    }
-
-    // Try to join the voice channel and get the connection
-    try {
-      var connection = await voiceChannel.join ();
-    } catch (error) {
-      console.error (`Could not join voice channel: ${error}`);
-      return message.channel.send (`Could not join voice channel: ${error}`);
-    }
-
-    // Stream the audio from YouTube using ytdl
-    const stream = ytdl (args [0], {filter: 'audioonly'});
-    // Create a dispatcher to play the stream
-    const dispatcher = connection.play (stream);
-
-    // Handle the finish event
-    dispatcher.on ('finish', () => {
-      // Leave the voice channel
-      voiceChannel.leave ();
-      // Send a message to the text channel
-      message.channel.send ('Finished playing!');
-    });
-
-    // Handle the error event
-    dispatcher.on ('error', error => {
-      console.error (error);
-      // Send a message to the text channel
-      message.channel.send (`An error occurred: ${error}`);
-    });
-
-    // Send a message to the text channel
-    message.channel.send (`Now playing: ${args [0]}`);
-  }
-});
-
- */

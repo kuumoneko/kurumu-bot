@@ -1,5 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client } = require('discord.js');
 const { joinVoiceChannel } = require('@discordjs/voice');
+const { QueryType, useQueue, useMainPlayer } = require('discord-player')
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('shuffle')
@@ -11,6 +13,15 @@ module.exports = {
 	 */
 
 	async execute(client, interaction) {
-		await interaction.reply('This is shuffle command:)))) updating....');
+
+		const queue = useQueue(interaction.guildId)
+
+		queue.tracks.shuffle();
+
+		await interaction.reply(
+			{
+				content: 'Your queue has been shuflled :>',
+				ephemeral: true,
+			});
 	},
 };
