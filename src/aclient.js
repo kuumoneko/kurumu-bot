@@ -9,14 +9,12 @@ const { SpotifyExtractor, YouTubeExtractor, SoundCloudExtractor } = require('@di
 // const Number =require('')
 
 
-class aclient
-{
-    constructor()
-    {
+class aclient {
+    constructor() {
         this.client = new discord.Client({
             intents: [discord.GatewayIntentBits.Guilds,
-                // discord.IntentsBitField.Flag,
-                discord.GatewayIntentBits.GuildVoiceStates]
+            // discord.IntentsBitField.Flag,
+            discord.GatewayIntentBits.GuildVoiceStates]
         });
 
         // music
@@ -24,9 +22,9 @@ class aclient
             ytdlOptions: {
                 quality: 'highestaudio',
             },
-            
+
         })
-       
+
 
 
         // this.queue = this.player.createPlaylist()
@@ -36,7 +34,7 @@ class aclient
         this.ptrack = new map();
         this.curr_track = new map();
 
-        this.isloop = new map(); 
+        this.isloop = new map();
         this.color = [
             0xCD5C5C, 0xFF6A6A, 0xEE6363, 0xCD5555, 0x8B3A3A, 0xB22222, 0xFF3030, 0xEE2C2C, 0xCD2626, 0x8B1A1A, 0xA52A2A, 0xFF4040, 0xEE3B3B,
             0x8B2323, 0xFF8C00, 0xFF7F00, 0xEE7600, 0xCD6600, 0xFF6347, 0xEE5C42, 0xFF4500, 0xEE4000, 0xFF0000, 0xEE0000, 0xDC143C, 0xCD3333,
@@ -46,7 +44,7 @@ class aclient
     get_color() {
         var rand = Math.floor(Math.random() * this.color.length)
 
-        return this.color[rand-1];
+        return this.color[rand - 1];
     }
 
 }

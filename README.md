@@ -1,7 +1,9 @@
 # Kurumu discord bot
 
-# Version 0.0.4
+# Version 0.0.5
 
-> Change Some command in `music`
+> Update command `help`
 
-> Fix `chat` command in `AI`
+> Add command `pause` and `resume`
+
+> remove command `hello` , `setnotice` and `news`

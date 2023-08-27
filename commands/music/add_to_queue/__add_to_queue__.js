@@ -1,12 +1,8 @@
-const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { CommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { spawn } = require('child_process');
-const fs = require('fs');
-const { API_KEY, CLIENT_ID } = require('D:\\kurumu-bot\\config.json');
 var _ = require("lodash");
-
-const YouTube = require('D:\\kurumu-bot\\src\\youtube\\YouTube');
 const aclient = require('../../../src/aclient');
-const { QueryType, useQueue, useMainPlayer } = require('discord-player')
+const { QueryType, useMainPlayer } = require('discord-player')
 
 /**
  * 

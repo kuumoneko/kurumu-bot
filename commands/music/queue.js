@@ -99,7 +99,7 @@ await interaction.deferReply({
 					var view = await update_component(curr_page, max_page, embeds);
 
 					await confirmation.update({
-						content: `You have deleted track ${deleted_track}`,
+						content: `You have deleted track ${deleted_track.split('/> ')[1]}`,
 						embeds: [embeds[curr_page]],
 						components: view,
 					});
@@ -176,7 +176,7 @@ async function update_embed(interaction) {
 
 	tracks.forEach(track => {
 		embeds[Math.floor(i / 10)].addFields({
-			name: `${i + 1}. ${track.title}`,
+			name: `${i + 1}/> ${track.title}`,
 			value: ' 	',
 		})
 

@@ -1,9 +1,6 @@
-const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client, IntentsBitField } = require('discord.js');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, getVoiceConnection, AudioPlayerStatus, entersState } = require('@discordjs/voice');
-const ytdl = require('ytdl-core');
+const { SlashCommandBuilder , CommandInteraction } = require('discord.js');
 const _ = require("lodash");
-const { add_to_queue } = require('./add_to_queue/__add_to_queue__');
-const { QueryType, useQueue, useMainPlayer } = require('discord-player')
+const { useQueue } = require('discord-player')
 
 module.exports = {
     data: new SlashCommandBuilder()

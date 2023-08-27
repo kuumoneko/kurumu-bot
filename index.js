@@ -8,9 +8,6 @@ const { clientId, token } = require('./config.json');
 const { generateDependencyReport } = require('@discordjs/voice');
 const { SpotifyExtractor, YouTubeExtractor, SoundCloudExtractor } = require('@discord-player/extractor')
 
-// console.log(generateDependencyReport());
-
-
 const kclient = new aclient()
 
 async function check(client) {

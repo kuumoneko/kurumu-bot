@@ -14,7 +14,16 @@ module.exports = {
                 .setDescription('link or query'))
         .addBooleanOption(isshuffle =>
             isshuffle.setName('isshuffle')
-                    .setDescription('Do you want to shuffle the queue?')) 
+                .setDescription('Do you want to shuffle the queue?'))
+        .addStringOption(isloop =>
+            isloop.setName('isloop')
+                .setDescription('Chose your loop mode')
+                .addChoices(
+                    { name: 'Track', value: '1' },
+                    { name: 'Queue', value: '2' },
+                    { name: 'Autoplay', value: '3' },
+                    { name: 'Disabled', value: '0' }
+                ))
         .addStringOption(mode =>
             mode.setName('mode')
                 .setDescription('set your search mode(only use for search query)')
@@ -36,8 +45,8 @@ module.exports = {
         })
 
         var prompt = interaction.options.getString('prompt');
-        // const isloop = interaction.options.getBoolean('isloop');
-        const shuffle = interaction.options.getBoolean('shuffle');
+        const isloop = interaction.options.getString('isloopp') ?? 'None';
+        const shuffle = interaction.options.getBoolean('isshuffle');
         const mode = interaction.options.getString('mode') ?? 'None';
         const id = interaction.guildId;
         const VoiceChannel = interaction.member.voice.channel;
@@ -121,7 +130,11 @@ module.exports = {
 
         const queue = useQueue(interaction.guildId);
 
-        queue.tracks.shuffle();
+        if (shuffle == true)
+            queue.tracks.shuffle();
+        if (isloop !== 'None')
+            queue.setRepeatMode(Number(isloop));
+
         
         if (!interaction.member.voice.channel) {
             await interaction.followUp({
