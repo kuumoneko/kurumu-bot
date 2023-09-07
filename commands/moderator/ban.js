@@ -1,4 +1,4 @@
-const { PermissionFlagsBits, CommandInteraction, SlashCommandBuilder } = require('discord.js')
+const { PermissionFlagsBits, CommandInteraction, SlashCommandBuilder, EmbedBuilder } = require('discord.js')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -17,26 +17,63 @@ module.exports = {
 
 	/**
 	 * 
-	 * 
 	 * @param {CommandInteraction} interaction
 	 */
 
 	async execute(client, interaction) {
-		const mb = interaction.options.getUser('member')
-		const reason = interaction.options.getString('reason')
+		await interaction.deferReply({
+			ephemeral: true
+		});
 
-		const AuthorMember = interaction.guild.members.cache.find(member => member.id === interaction.user.id)
-		const targetMember = interaction.guild.members.cache.find(member => member.id === mb.id)
+		const mb = interaction.options.getUser('member');
+		const reason = interaction.options.getString('reason');
+
+		const AuthorMember = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
+		const targetMember = interaction.guild.members.cache.find(member => member.id === mb.id);
+
+		if (AuthorMember.roles.highest.position > targetMember.roles.highest.position) {
+			try {
+
+				await targetMember.ban({ reason: reason });
 
 
-		if (AuthorMember.roles.highest.position <= targetMember.roles.highest.position) {
-			await interaction.reply(`You can't do this :))`)
-			return
+				await interaction.followUp({
+					embeds: [new EmbedBuilder()
+						.setColor(client.get_color())
+						.addFields({
+							name: `Yes, you have banned ${AuthorMember.nickname}`,
+							value: `Reason banned: ${reason}`
+						})
+					],
+					ephemeral: true
+				});
+			}
+			catch (e) {
+				await interaction.followUp({
+					embeds: [
+						new EmbedBuilder()
+							.setColor(client.get_color())
+							.addFields({
+								name: `Nuhh, I catch an error while doing your command :<`,
+								value: `Error: ${e}`
+							})
+					],
+
+					ephemeral: true
+				});
+			}
 		}
-
-		await targetMember.ban({ reason: reason })
-
-
-		await interaction.reply('This is Ban command:)))) updating....');
+		else {
+			await interaction.followUp({
+				embeds: [new EmbedBuilder()
+					.setColor(client.get_color())
+					.addFields({
+						name: `You can't do this action`,
+						value: `Reason : Missing permission`
+					})
+				],
+				ephemeral: true,
+			});
+		}
 	},
 };

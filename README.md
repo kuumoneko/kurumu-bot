@@ -1,9 +1,9 @@
 # Kurumu discord bot
 
-# Version 0.0.5
+# Version 0.6.0
 
-> Update command `help`
+> Update UI for all command
 
-> Add command `pause` and `resume`
+> Add module for the best experiences
 
-> remove command `hello` , `setnotice` and `news`
+> Add command `status`

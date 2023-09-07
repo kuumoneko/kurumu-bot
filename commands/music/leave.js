@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client } = require('discord.js');
+const { SlashCommandBuilder, CommandInteraction, EmbedBuilder } = require('discord.js');
 const vocie = require('@discordjs/voice');
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -13,21 +13,47 @@ module.exports = {
 	async execute(client, interaction) {
 		try {
 			temp = vocie.getVoiceConnection(interaction.guild.id)
+			if (temp) {
+				temp.destroy()
 
-			temp.destroy()
-
-			await interaction.reply({
-				content: `I have leaved from <#${temp.joinConfig.channelId}>`,
-				ephemeral: true,
-			})
-			return
+				await interaction.reply({
+					embeds: [
+						new EmbedBuilder()
+							.setColor(client.get_color())
+							.addFields({
+								name: `I have leaved current voice channel`,
+								value: `Voice channel: <#${temp.joinConfig.channelId}>`,
+							})
+					],
+					ephemeral: true,
+				});
+			}
+			else {
+				await interaction.reply({
+					embeds: [
+						new EmbedBuilder()
+							.setColor(client.get_color())
+							.addFields({
+								name: `I can't leave current voice channel`,
+								value: `Error: I'm not in any voice channel`,
+							})
+					],
+					ephemeral: true,
+				});
+			}
 		}
 		catch (error) {
 			await interaction.reply({
-				content: `Something was wrong, please call Kuumo for help.\nError: ${error.message}`,
+				embeds: [
+					new EmbedBuilder()
+						.setColor(client.get_color())
+						.addFields({
+							name: `I can't leave current voice channel`,
+							value: `Error: ${error}`,
+						})
+				],
 				ephemeral: true,
-			})
-			return
+			});
 		}
 	},
 };

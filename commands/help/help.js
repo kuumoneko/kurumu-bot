@@ -88,7 +88,14 @@ module.exports = {
 			const command = client.client.commands.get(command_help) ?? 'Not found';
 			if (command === 'Not found') {
 				await interaction.followUp({
-					content: "Error: `404 Not Found`",
+					embeds: [
+						new EmbedBuilder()
+							.setColor(client.get_color())
+							.addFields({
+								name: `Error:`,
+								value: `404 Not Found`
+							})
+					],
 					ephemeral: true,
 
 				});

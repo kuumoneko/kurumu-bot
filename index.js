@@ -1,12 +1,13 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits, Message } = require('discord.js');
+const { Collection, Events, EmbedBuilder } = require('discord.js');
 const aclient = require('./src/aclient.js');
 const { REST, Routes } = require('discord.js');
-const { clientId, token } = require('./config.json');
+const { clientId, token } = require('./database/config.json');
+const datetime = require('node-datetime')
+const process = require('node:process')
 
-const { generateDependencyReport } = require('@discordjs/voice');
-const { SpotifyExtractor, YouTubeExtractor, SoundCloudExtractor } = require('@discord-player/extractor')
+const { SpotifyExtractor, YouTubeExtractor, SoundCloudExtractor } = require('@discord-player/extractor');
 
 const kclient = new aclient()
 
@@ -71,6 +72,7 @@ for (const file of commandFiles) {
 	// Set a new item in the Collection with the key as the command name and the value as the exported module
 	if ('data' in command && 'execute' in command) {
 		kclient.client.commands.set(command.data.name, command);
+		console.log(command.data.name);
 	} else {
 		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 	}
@@ -121,10 +123,7 @@ kclient.client.on(Events.InteractionCreate, async interaction => {
 kclient.client.on("ready", () => {
 	console.log(`Logged in as ${kclient.client.user.tag}!`)
 })
-kclient.client.on("message", () => {
-	console.log('msg')
-})
-
 
 // Log in to Discord with your kclient.client's token
+
 kclient.client.login(token);

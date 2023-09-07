@@ -1,6 +1,5 @@
-const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client } = require('discord.js');
-const { joinVoiceChannel, getVoiceConnection } = require('@discordjs/voice');
-const { QueryType, useQueue, useMainPlayer } = require('discord-player')
+const { SlashCommandBuilder, CommandInteraction, EmbedBuilder } = require('discord.js');
+const { useQueue } = require('discord-player')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -19,21 +18,34 @@ module.exports = {
 		const queue = useQueue(interaction.guildId);
 
 		if (!queue.deleted) {
+			const channell = queue.channel;
+			client.ctrack[interaction.guildId] = []
+
 			queue.setRepeatMode(0);
+
 			queue.clear();
+
 			queue.node.stop();
+
 			queue.delete();
 
 			await interaction.followUp({
-				content: `I have stopped and leaved ${queue.channel}`,
+				embeds: [
+					new EmbedBuilder()
+						.setColor(client.get_color())
+						.setTitle(`I have stopped and leaved ${channell}`)
+				],
 				ephemeral: true,
 			});
 			return;
 		}
 
-
 		await interaction.followUp({
-			content: `I have stopped and leaved Voice channel`,
+			embeds: [
+				new EmbedBuilder()
+					.setColor(client.get_color())
+					.setTitle(`I have stopped and leaved Voice channel`)
+			],
 			ephemeral: true,
 		});
 	},

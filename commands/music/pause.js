@@ -1,6 +1,5 @@
-const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client } = require('discord.js');
-const { joinVoiceChannel, getVoiceConnection } = require('@discordjs/voice');
-const { QueryType, useQueue, useMainPlayer } = require('discord-player')
+const { SlashCommandBuilder, CommandInteraction, EmbedBuilder } = require('discord.js');
+const { useQueue } = require('discord-player')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -14,22 +13,51 @@ module.exports = {
 
     async execute(client, interaction) {
 
-        await interaction.deferReply()
+        await interaction.deferReply({
+            ephemeral: true
+        });
 
         const queue = useQueue(interaction.guildId);
 
-        if (!queue.node.isPlaying()) {
+        if (queue.node.isPlaying()) {
             queue.node.setPaused(true)
 
             await interaction.followUp({
-                content: `I have pause the queue`,
+                embeds: [
+                    new EmbedBuilder()
+                        .setTitle(`I have paused the queue`)
+                        .setThumbnail(queue.currentTrack.thumbnail)
+                        .setColor(client.get_color())
+                        .addFields([
+                            {
+                                name: `Current track:`,
+                                value: `${queue.currentTrack.title}`
+                            },
+                            {
+                                name: `Author:`,
+                                value: `${queue.currentTrack.author}`,
+                            },
+                            {
+                                name: `Now timestamp:`,
+                                value: `${queue.node.getTimestamp().current.label} / ${queue.node.getTimestamp().total.label}`
+                            }
+                        ])
+                ],
                 ephemeral: true,
             });
-            return;
         }
         else {
             await interaction.followUp({
-                content: `I have pauseed before`,
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor(client.get_color())
+                        .addFields([
+                            {
+                                name: `I can't pause the queue`,
+                                value: `Reason : I'm not playing anything now`
+                            }
+                        ])
+                ],
                 ephemeral: true,
             });
         }

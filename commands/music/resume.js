@@ -1,5 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client } = require('discord.js');
-const { joinVoiceChannel, getVoiceConnection } = require('@discordjs/voice');
+const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client, EmbedBuilder } = require('discord.js');
 const { QueryType, useQueue, useMainPlayer } = require('discord-player')
 
 module.exports = {
@@ -14,22 +13,51 @@ module.exports = {
 
     async execute(client, interaction) {
 
-        await interaction.deferReply()
+        await interaction.deferReply({
+            ephemeral: true
+        });
 
         const queue = useQueue(interaction.guildId);
 
-        if (!queue.node.isPaused()) {
+        if (queue.node.isPaused()) {
             queue.node.setPaused(false)
 
             await interaction.followUp({
-                content: `I have resume the queue`,
+                embeds: [
+                    new EmbedBuilder()
+                        .setTitle(`I have resumed the queue`)
+                        .setThumbnail(queue.currentTrack.thumbnail)
+                        .setColor(client.get_color())
+                        .addFields([
+                            {
+                                name: `Current track:`,
+                                value: `${queue.currentTrack.title}`
+                            },
+                            {
+                                name: `Author:`,
+                                value: `${queue.currentTrack.author}`,
+                            },
+                            {
+                                name: `Now timestamp:`,
+                                value: `${queue.node.getTimestamp().current.label} / ${queue.node.getTimestamp().total.label}`
+                            }
+                        ])
+                ],
                 ephemeral: true,
             });
-            return;
         }
         else {
             await interaction.followUp({
-                content: `I'm not pausing now`,
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor(client.get_color())
+                        .addFields([
+                            {
+                                name: `I can't resume the queue`,
+                                value: `Reason : I'm not pausing now`
+                            }
+                        ])
+                ],
                 ephemeral: true,
             });
         }

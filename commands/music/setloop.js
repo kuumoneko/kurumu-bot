@@ -1,9 +1,5 @@
-const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client, IntentsBitField } = require('discord.js');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, getVoiceConnection, AudioPlayerStatus, entersState } = require('@discordjs/voice');
-const ytdl = require('ytdl-core');
-const _ = require("lodash");
-const { add_to_queue } = require('./add_to_queue/__add_to_queue__');
-const { QueryType, useQueue, useMainPlayer } = require('discord-player')
+const { SlashCommandBuilder, CommandInteraction, EmbedBuilder } = require('discord.js');
+const { useQueue } = require('discord-player')
 
 
 module.exports = {
@@ -33,6 +29,7 @@ module.exports = {
 		const queue = useQueue(interaction.guildId);
 
 		queue.setRepeatMode(Number(mode))
+		client.isloop[interaction.guildId] = mode;
 
 		var bruh = {
 			0: 'Disabled Repeated mode',
@@ -43,8 +40,15 @@ module.exports = {
 
 
 		await interaction.reply({
-			content: `Your queue repeated mode has been change to ${bruh[Number(mode)]}`,
-			ephemeral:true,	
+			embeds: [
+				new EmbedBuilder()
+					.setColor(client.get_color())
+					.addFields({
+						name: `Current queue repeated mode has been changed`,
+						value: `Current: ${bruh[Number(mode)]}`
+					})
+			],
+			ephemeral: true,
 		});
 	},
 };

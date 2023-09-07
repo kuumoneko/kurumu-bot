@@ -1,11 +1,30 @@
-const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client, IntentsBitField } = require('discord.js');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, getVoiceConnection, AudioPlayerStatus, entersState } = require('@discordjs/voice');
-const ytdl = require('ytdl-core');
-const _ = require("lodash");
-const { add_to_queue } = require('./add_to_queue/__add_to_queue__');
-const { QueryType, useQueue, useMainPlayer } = require('discord-player')
+const { SlashCommandBuilder, CommandInteraction, EmbedBuilder, } = require('discord.js');
+const { add_to_queue } = require('./support/__add_to_queue__');
+const { useQueue, useMainPlayer } = require('discord-player')
+const _ = require('lodash')
+const {playing} = require('./support/playing')
+
+const YOUTUBE_API_KEY = 'AIzaSyAunPKDmswMpyUiX2PdVqF9_MqF8DJA7GI';
+
+// get a similar song from YouTube based on a video ID
+async function getSimilarSong(videoId) {
+    // construct the API URL with the relatedToVideoId filter
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&key=${YOUTUBE_API_KEY}`;
+    // fetch the response from the API
+    const response = await fetch(url);
+    // parse the response as JSON
+    const data = await response.json();
+    // get the first item from the results
+    const item = data.items[0];
+    // return the video ID and title of the similar song
+    return {
+        id: item.id.videoId,
+        title: item.snippet.title
+    };
+}
 
 module.exports = {
+    playing: playing,
     data: new SlashCommandBuilder()
         .setName('play')
         .setDescription('Play music!')
@@ -34,8 +53,7 @@ module.exports = {
                 )),
 
     /**
-     * 
-     * 
+     *  
      * @param {CommandInteraction} interaction 
      */
 
@@ -44,106 +62,82 @@ module.exports = {
             ephemeral: true,
         })
 
-        var prompt = interaction.options.getString('prompt');
-        const isloop = interaction.options.getString('isloopp') ?? 'None';
+        var prompt = interaction.options.getString('prompt') ?? undefined;
+        const isloop = interaction.options.getString('isloop') ?? 'None';
         const shuffle = interaction.options.getBoolean('isshuffle');
         const mode = interaction.options.getString('mode') ?? 'None';
-        const id = interaction.guildId;
         const VoiceChannel = interaction.member.voice.channel;
+
+
 
         if (!VoiceChannel) {
             await interaction.followUp({
                 content: `Please join a voice channel first :<`,
                 ephemeral: true
             })
+            return;
         }
+
 
         const player = useMainPlayer();
+        var tracks;
 
-        var moi = "ksdjnkd";
+        if (prompt.search('youtu') != -1 || prompt.search('spotify') != -1 || prompt.search('soundcloud') != -1) {
 
-        // moi.search(-1)
-        if (prompt.search('youtu') != -1 || prompt.search('spotify') != -1 || prompt.search('soundclound') != -1) {
-            await interaction.followUp({
-                content: `Track(s) have been added to queue`,
-                ephemeral: true,
-            });
             if (prompt.search('&feature=shared') != -1) {
                 prompt = prompt.split('&feature=shared')[0];
-
             }
 
-            await player.play(VoiceChannel, prompt, {
-                requestedBy: interaction.user,
-                nodeOptions: {
-                    leaveOnEmpty: true,
-                    leaveOnEmptyCooldown: 300_000,
-                    leaveOnEnd: true,
-                    leaveOnEndCooldown: 300_000,
-                    leaveOnStop: true,
-                    leaveOnStopCooldown: 300_000,
-                    maxSize: 1000,
-                    maxHistorySize: 100,
-                    volume: 50,
-                    bufferingTimeout: 3000,
-                    connectionTimeout: 30000,
-                    metadata: {
-                        channel: interaction.channel,
-                        client: interaction.client,
-                        requestedBy: interaction.user,
-                        // track: searchResult.tracks[0]
-                    }
-                }
-            });
-
+            tracks = await player.search(prompt);
+        }
+        else if (prompt !== undefined) {
+            tracks = await add_to_queue(client, interaction, prompt, mode);
+            if (tracks == [])
+                return;
         }
         else {
-            const trackk = await add_to_queue(client, interaction, prompt, mode);
-
-            if (trackk == 'None')
-                return;
-            
-            await player.play(VoiceChannel, trackk, {
-                requestedBy: interaction.user,
-                nodeOptions: {
-                    leaveOnEmpty: true,
-                    leaveOnEmptyCooldown: 300_000,
-                    leaveOnEnd: true,
-                    leaveOnEndCooldown: 300_000,
-                    leaveOnStop: true,
-                    leaveOnStopCooldown: 300_000,
-                    maxSize: 1000,
-                    maxHistorySize: 100,
-                    volume: 50,
-                    bufferingTimeout: 3000,
-                    connectionTimeout: 30000,
-                    metadata: {
-                        channel: interaction.channel,
-                        client: interaction.client,
-                        requestedBy: interaction.user,
-                        // track: searchResult.tracks[0]
-                    }
-                }
-            });
-
+            return;
         }
 
-        const queue = useQueue(interaction.guildId);
-
-        if (shuffle == true)
-            queue.tracks.shuffle();
-        if (isloop !== 'None')
-            queue.setRepeatMode(Number(isloop));
-
-        
-        if (!interaction.member.voice.channel) {
-            await interaction.followUp({
-                content: `Please join a voice channel first :<`,
-                ephemeral: true,
-            });
-
+        if (_.get(client.ctrack, interaction.guildId, 'None') === 'None') {
+            client.ctrack[interaction.guildId] = []
+            client.ptrack[interaction.guildId] = []
         }
 
+        tracks._data.tracks.forEach(item => {
+            client.ctrack[interaction.guildId].push(item.url);
+        })
 
+        await interaction.followUp({
+            embeds: [
+                new EmbedBuilder()
+                    .setColor(client.get_color())
+                    .setFields({
+                        name: `I have added some tracks to queue`,
+                        value: `Number of tracks: ${tracks._data.tracks.length}`
+                    })
+            ],
+            ephemeral: true,
+        });
+
+        if (shuffle == true) {
+            var array = client.ctrack[interaction.guildId];
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+
+            client.ctrack[interaction.guildId] = array;
+        }
+
+        if (isloop !== 'None') {
+            client.isloop[interaction.guildId] = isloop;
+        }
+        else {
+            client.isloop[interaction.guildId] = (_.get(client.isloop, interaction.guildId, 'None') === 'None') ? '0' : client.isloop[interaction.guildId];
+        }
+
+        await playing(client, interaction);
     }
+
 };

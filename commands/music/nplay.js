@@ -1,5 +1,4 @@
-const { SlashCommandBuilder , CommandInteraction } = require('discord.js');
-const _ = require("lodash");
+const { SlashCommandBuilder, CommandInteraction, EmbedBuilder } = require('discord.js');
 const { useQueue } = require('discord-player')
 
 module.exports = {
@@ -14,12 +13,56 @@ module.exports = {
      */
 
     async execute(client, interaction) {
+
         const queue = useQueue(interaction.guildId);
 
-        await interaction.reply({
-            content: `Now playing: ${queue.currentTrack}`,
-            ephemeral: true,
-        })
+
+
+        if (queue) {
+            await interaction.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setTitle(`Now playing:`)
+                        .setColor(client.get_color())
+                        .setThumbnail(queue.currentTrack.thumbnail)
+                        .addFields([
+                            {
+                                name: `Title:`,
+                                value: `${queue.currentTrack.title}`,
+                            },
+                            {
+                                name: `Author:`,
+                                value: `${queue.currentTrack.author}`
+                            },
+                            {
+                                name: `Now timestamp:`,
+                                value: `${queue.node.getTimestamp().current.label} / ${queue.node.getTimestamp().total.label}`
+                            }
+
+                        ])
+                ],
+
+                ephemeral: true,
+            });
+        }
+        else {
+            await interaction.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor(client.get_color())
+                        .addFields([
+                            {
+                                name: `I can't get current track`,
+                                value: `Reason: I'm not playing anything now`,
+                            },
+                        ])
+                ],
+
+                ephemeral: true,
+            });
+        }
+
+
 
     }
 

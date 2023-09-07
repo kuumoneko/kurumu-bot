@@ -1,5 +1,4 @@
-const { SlashCommandBuilder, Client, CommandInteraction } = require('discord.js');
-const { spawn } = require('child_process');
+const { SlashCommandBuilder,  CommandInteraction } = require('discord.js');
 const { Getresponse } = require('./chatbot')
 
 module.exports = {

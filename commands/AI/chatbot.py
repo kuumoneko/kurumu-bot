@@ -2,19 +2,20 @@ from Bard import Chatbot as BardChatBot
 from EdgeGPT.EdgeGPT import Chatbot as EdgeChatBot
 from EdgeGPT.EdgeGPT import ConversationStyle
 import json
-from database import bard
 import asyncio
 from asgiref.sync import sync_to_async
 from datetime import datetime
 import re
 
-cookies = json.loads(
-    open(".\\database\\cookies.json", encoding="utf-8").read())
+config = json.loads(
+    
+    open('.\\database\\config.json' , encoding="utf-8").read())
 
-edgechatbot = EdgeChatBot(cookies=cookies)
 
-Secure_1PSID = bard.Secure_1PSID
-Secure_1PSIDTS = bard.Secure_1PSIDTS
+edgechatbot = EdgeChatBot(cookies=config['cookies'])
+
+Secure_1PSID = config['Secure_1PSID']
+Secure_1PSIDTS = config['Secure_1PSIDTS']
 
 bardchatbot = BardChatBot(Secure_1PSID, Secure_1PSIDTS)
 

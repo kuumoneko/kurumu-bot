@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, Client, CommandInteraction, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, Client, CommandInteraction, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -19,34 +19,52 @@ module.exports = {
 	 */
 
 	async execute(client, interaction) {
-		const mb = interaction.options.getUser('member')
-		const reason = interaction.options.getString('reason')
+
+		await interaction.deferReply({
+			ephemeral: true
+		})
+		const mb = interaction.options.getUser('member');
+		const reason = interaction.options.getString('reason') ?? 'None';
 
 		var Target = interaction.guild.members.cache.find(member => member.id === mb.id);
 		var user = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
-		var clientt = interaction.guild.members.cache.find(member => member.id === client.client.user.id);
 
-		if (clientt.roles.highest.position <= Target.roles.highest.position) {
-			await interaction.reply(`I can't do this action :<`)
-			return;
-		}
 
 		if (user.roles.highest.position > Target.roles.highest.position) {
 			Target.kick({
 				reason: reason,
 			})
 
-			await interaction.reply({
-				content: `Done`,
+			await interaction.followUp({
+				embeds: [
+					new EmbedBuilder()
+						.setColor(client.get_color())
+						.addFields(
+							{
+								name: `You have kicked ${Target.displayName} `,
+								value: `Reason: ${reason}`,
+							}
+						)
+				],
 				ephemeral: true,
 			})
-
-			await interaction.channel.send(`${Target} has been kicked by ${interaction.user} with reason: ${reason}`)
-
-			return
+		}
+		else {
+			await interaction.followUp({
+				embeds: [
+					new EmbedBuilder()
+						.setColor(client.get_color())
+						.addFields(
+							{
+								name: `You can't kick ${Target.displayName} `,
+								value: `Reason: Missing permission`,
+							}
+						)
+				],
+				ephemeral: true,
+			})
 		}
 
 
-		await interaction.reply(`You can't do this action :<`)
 	},
 };

@@ -1,23 +1,16 @@
 const discord = require('discord.js')
-const music = require('@discordjs/voice')
-const deque = require('collections/deque.js')
 const map = require('collections/map.js')
 const { Player } = require('discord-player')
-const { SpotifyExtractor, YouTubeExtractor, SoundCloudExtractor } = require('@discord-player/extractor')
-
-
-// const Number =require('')
-
 
 class aclient {
     constructor() {
+        this.version = "v0.6.0"
         this.client = new discord.Client({
-            intents: [discord.GatewayIntentBits.Guilds,
-            // discord.IntentsBitField.Flag,
-            discord.GatewayIntentBits.GuildVoiceStates]
+            intents: Object.keys(discord.GatewayIntentBits).map((a) => {
+                return discord.GatewayIntentBits[a];
+            }),
         });
 
-        // music
         this.player = new Player(this.client, {
             ytdlOptions: {
                 quality: 'highestaudio',
@@ -26,13 +19,8 @@ class aclient {
         })
 
 
-
-        // this.queue = this.player.createPlaylist()
-        // this.q = this.player.queues.cache.
-        // this.q.
         this.ctrack = new map();
         this.ptrack = new map();
-        this.curr_track = new map();
 
         this.isloop = new map();
         this.color = [
@@ -42,9 +30,9 @@ class aclient {
     }
 
     get_color() {
-        var rand = Math.floor(Math.random() * this.color.length)
+        var rand = Math.floor(Math.random() * (this.color.length))
 
-        return this.color[rand - 1];
+        return this.color[rand];
     }
 
 }
