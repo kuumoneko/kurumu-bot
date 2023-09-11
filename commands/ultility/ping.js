@@ -1,22 +1,21 @@
-const { SlashCommandBuilder, CommandInteraction, EmbedBuilder } = require('discord.js');
+const { CommandInteraction, EmbedBuilder } = require('discord.js');
 
-module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('ping')
-		.setDescription('Replies with Pong!'),
-	/**
-	 * 
-	 * 
-	 * @param {CommandInteraction} interaction
-	 */
+module.exports = { get_ping }
+/**
+ * 
+ * 
+ * @param {CommandInteraction} interaction
+ */
 
-	async execute(client, interaction) {
-		await interaction.reply({
-			embeds: [
-				new EmbedBuilder()
-					.setTitle(`CLient's Latency`)
-					.setColor(client.get_color())
-					.addFields([{
+async function get_ping(client, interaction) {
+	return {
+		code: 200,
+		message: [
+			new EmbedBuilder()
+				.setTitle(`CLient's Latency`)
+				.setColor(client.get_color())
+				.addFields([
+					{
 						name: `Ping:`,
 						value: `${Date.now() - interaction.createdTimestamp}ms`
 					},
@@ -24,9 +23,7 @@ module.exports = {
 						name: `API Latency:`,
 						value: `${Math.round(client.client.ws.ping)}ms`
 					}
-					])
-			],
-			ephemeral: true,
-		})
-	},
+				])
+		],
+	};
 };

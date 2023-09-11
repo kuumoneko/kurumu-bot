@@ -1,9 +1,9 @@
-const { SlashCommandBuilder, Client, CommandInteraction, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder,  CommandInteraction, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('chrole')
-		.setDescription('Change role for a member!')
+		.setDescription('Change role for a member! (only use slash command)')
 		.addUserOption(member =>
 			member.setName('member')
 				.setDescription('Who do you want to call?')

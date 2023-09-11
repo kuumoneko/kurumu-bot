@@ -18,7 +18,7 @@ async function add_to_queue(client, interaction, prompt, mode) {
 }
 
 module.exports = {
-    add_to_queue: add_to_queue,
+    add_to_queue,
 }
 
 /**
@@ -28,6 +28,8 @@ module.exports = {
  * @returns 
  */
 async function check_prompt(client, interaction, prompt, mode) {
+
+    const user = (interaction.deferred) ? interaction.user : interaction.author;
     const player = useMainPlayer();
     var searchResult;
 
@@ -121,14 +123,19 @@ async function check_prompt(client, interaction, prompt, mode) {
 
     var view = await update_component(curr_page, max_page);
 
-    var response = await interaction.followUp({
+    var response = (interaction.deferred) ? 
+    await interaction.followUp({
         embeds: [embeds[curr_page].embeb],
         components: view,
-    });
+    }) :
+        await interaction.reply({
+            embeds: [embeds[curr_page].embeb],
+            components: view,
+        })
 
     var done = false;
     while (done == false) {
-        const collectorFilter = i => i.user.id === interaction.user.id;
+        const collectorFilter = i => i.user.id === user.id;
         try {
             const confirmation = await response.awaitMessageComponent({ filter: collectorFilter });
 

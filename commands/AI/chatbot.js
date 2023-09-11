@@ -3,12 +3,12 @@ const { spawn } = require('child_process');
 async function Getresponse(mess, mode) {
     return new Promise((resolve, reject) => {
         // Create a new child process that runs the Python file
-        var check = "python " + " -c " + ` "from commands.AI import chatbot; chatbot.check('${mess}' ,  '${mode}')"`;
+        var check = "python " + " -c " + ` "from Commands.AI import chatbot; chatbot.check('${mess}' ,  '${mode}')"`;
 
         console.log(check)
 
         const pythonProcess = spawn("python",
-            ["-c", `from commands.AI import chatbot; chatbot.check("${mess}", "${mode}")`]);
+            ["-c", `from Commands.AI import chatbot; chatbot.check("${mess}", "${mode}")`]);
         // Initialize an empty string to store the output
         let output = "";
         // Listen for data from the standard output stream

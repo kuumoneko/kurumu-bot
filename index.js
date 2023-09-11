@@ -1,13 +1,16 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Collection, Events, EmbedBuilder } = require('discord.js');
+const { Collection, Events } = require('discord.js');
 const aclient = require('./src/aclient.js');
 const { REST, Routes } = require('discord.js');
 const { clientId, token } = require('./database/config.json');
-const datetime = require('node-datetime')
-const process = require('node:process')
+
+const _ = require('lodash')
 
 const { SpotifyExtractor, YouTubeExtractor, SoundCloudExtractor } = require('@discord-player/extractor');
+
+const { ai, joinn, leavee, nplayy, pause_music, resume_prefix, queue_prefix, setloop_prefix,
+	skip_prefix, stop_prefix, ping_prefix, status_prefix, help_prefix, play_prefix, shuffle_prefix } = require('./Prefix_commands/index.js')
 
 const kclient = new aclient()
 
@@ -21,15 +24,12 @@ async function check(client) {
 check(kclient)
 
 const commands = [];
-// Grab all the command files from the commands directory you created earlier
-const foldersPath = path.join(__dirname, 'commands');
+const foldersPath = path.join(__dirname, 'Slash_commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
-	// Grab all the command files from the commands directory you created earlier
 	const commandsPath = path.join(foldersPath, folder);
 	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-	// Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 	for (const file of commandFiles) {
 		const filePath = path.join(commandsPath, file);
 		const command = require(filePath);
@@ -40,15 +40,12 @@ for (const folder of commandFolders) {
 	}
 }
 
-// Construct and prepare an instance of the REST module
 const rest = new REST().setToken(token);
 
-// and deploy your commands!
 (async () => {
 	try {
 		console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
-		// The put method is used to fully refresh all commands in the guild with the current set
 		const data = await rest.put(
 			Routes.applicationCommands(clientId),
 			{ body: commands },
@@ -56,20 +53,18 @@ const rest = new REST().setToken(token);
 
 		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {
-		// And of course, make sure you catch and log any errors!
 		console.error(error);
 	}
 })();
 
 kclient.client.commands = new Collection();
 
-const commandsPath = path.join(__dirname, 'commands');
+const commandsPath = path.join(__dirname, 'Slash_commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
 	const command = require(filePath);
-	// Set a new item in the Collection with the key as the command name and the value as the exported module
 	if ('data' in command && 'execute' in command) {
 		kclient.client.commands.set(command.data.name, command);
 		console.log(command.data.name);
@@ -78,14 +73,12 @@ for (const file of commandFiles) {
 	}
 }
 
-const Pathh = path.join(__dirname, 'commands');
+const Pathh = path.join(__dirname, 'Slash_commands');
 const Folderss = fs.readdirSync(Pathh);
 
 for (const folder of Folderss) {
-	// Grab all the command files from the commands directory you created earlier
 	const commandsPath = path.join(foldersPath, folder);
 	const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-	// Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 	for (const file of commandFiles) {
 		const filePath = path.join(commandsPath, file);
 		const command = require(filePath);
@@ -111,6 +104,7 @@ kclient.client.on(Events.InteractionCreate, async interaction => {
 		await command.execute(kclient, interaction);
 	} catch (error) {
 		console.error(error);
+		console.log(interaction.commandName)
 		if (interaction.replied || interaction.deferred) {
 			await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
 		} else {
@@ -119,8 +113,149 @@ kclient.client.on(Events.InteractionCreate, async interaction => {
 	}
 });
 
+kclient.client.on('messageCreate', async (ctx) => {
+	if (ctx.author.id === kclient.client.user.id)
+		return;
+
+	if ((ctx.content.startsWith(kclient.prefix))) {
+		var arg = ctx.content.split(' ')
+
+		const command = arg[0].split(kclient.prefix)[1];
+
+		if (command === 'chat') {
+			const temp = arg.slice(1, -1);
+			const chatbot = arg[arg.length - 1];
+			var prompt = "";
+
+			temp.forEach(str => {
+				prompt += str + ' '
+			})
+			await ai(ctx, prompt, chatbot);
+		}
+
+		if (command === 'join') {
+			await joinn(kclient, ctx);
+		}
+
+		if (command === 'leave') {
+			await leavee(kclient, ctx);
+		}
+
+		if (command === 'nplay') {
+			await nplayy(kclient, ctx);
+		}
+
+		if (command === 'pause') {
+			await pause_music(kclient, ctx);
+		}
+
+		if (command === 'resume') {
+			await resume_prefix(kclient, ctx);
+		}
+
+		if (command === 'queue') {
+			await queue_prefix(kclient, ctx);
+		}
+
+		if (command === 'setloop') {
+			await setloop_prefix(kclient, ctx, arg[1]);
+		}
+
+		if (command === 'shuffle') {
+			await shuffle_prefix(kclient, ctx);
+		}
+
+		if (command === 'skip') {
+			await skip_prefix(kclient, ctx);
+		}
+
+		if (command === 'stop') {
+			await stop_prefix(kclient, ctx);
+		}
+
+		if (command === 'ping') {
+			await ping_prefix(kclient, ctx);
+		}
+
+		if (command === 'status') {
+			await status_prefix(kclient, ctx);
+		}
+
+		if (command === 'help') {
+			await help_prefix(kclient, ctx, arg[1] || 'None');
+		}
+
+		if (command === 'play') {
+			var argss1 = arg.slice(arg.length - 4);
+
+			var argss = []
+			argss1.forEach(a => {
+				argss.push(a.toLowerCase())
+			})
+
+			var prompts = '', isloop = 'None', mode = 'None', shuffle = 'None';
+
+			const check_loop = {
+				'track': '1',
+				'queue': '2',
+				'autoplay': '3',
+				'disabled': '0'
+			}
+
+			const check_mode = {
+				'youtube': 'youtube',
+				'spotify': 'spotify',
+				'soundclound': 'soundclound',
+			}
+
+			const check_shuffle = {
+				'true': true,
+				'false': false,
+			}
+
+			var moi = 2 ^ 53;
+
+			argss.forEach((arrgg, index) => {
+				if (_.get(check_loop, arrgg, undefined) !== undefined) {
+					isloop = check_loop[arrgg];
+
+					moi = Math.min(moi, index + arg.length - 4);
+				}
+			});
+
+			argss.forEach((arrgg, index) => {
+				if (_.get(check_mode, arrgg, undefined) !== undefined) {
+					mode = check_mode[arrgg];
+
+
+					moi = Math.min(moi, index + arg.length - 4);
+				}
+			});
+
+			argss.forEach((arrgg, index) => {
+				if (_.get(check_shuffle, arrgg, undefined) !== undefined) {
+					shuffle = check_shuffle[arrgg];
+
+					moi = Math.min(moi, index + arg.length - 4);
+				}
+			});
+
+			const temp = arg.slice(1, moi);
+			temp.forEach(str => {
+				prompts += str + ' '
+			})
+
+			await play_prefix(kclient, ctx, prompts, isloop, shuffle, mode);
+		}
+
+	}
+})
+
 
 kclient.client.on("ready", () => {
+	console.log(`[Warning] Make sure that you have updated BingAI and Bard cookies`)
+	console.log(`if you don't update cookies, you can have some error when running`)
+	console.log(`Recommend updating cookies cookies before running bot:>`)
 	console.log(`Logged in as ${kclient.client.user.tag}!`)
 })
 

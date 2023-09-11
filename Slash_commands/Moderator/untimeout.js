@@ -1,40 +1,18 @@
 const { PermissionFlagsBits, CommandInteraction, SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js')
 
-const { type } = require('os');
-
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('timeout')
-		.setDescription('Timeout a member!')
-
+		.setName('untimeout')
+		.setDescription('Untimeout a  member! (only use slash command)')
 		.addUserOption(option =>
 			option.setName('member')
 				.setDescription('Who do you want to call?')
 				.setRequired(true))
-
-		.addIntegerOption(option =>
-			option.setName('time')
-				.setRequired(true)
-				.setDescription('How long you want to timeout?'))
-		.addStringOption(option =>
-			option.setName('value')
-				.setDescription('Time Unit')
-				.setRequired(true)
-				.addChoices(
-					{ name: 'Seconds', value: 'Seconds' },
-					{ name: 'Minutes', value: 'Minutes' },
-					{ name: 'Hours', value: 'Hours' },
-					{ name: 'Days', value: 'Days' },
-					{ name: 'Weeks', value: 'Weeks' },
-				))
-
-		.addStringOption(option =>
-			option.setName('reason')
-				.setDescription('Why you want to do to that?'))
+		.addStringOption(reason =>
+			reason.setName('reason')
+				.setDescription('Why do you do that?'))
 
 		.setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
-
-
 	/**
 	 * 
 	 * 
@@ -42,19 +20,16 @@ module.exports = {
 	 */
 
 	async execute(client, interaction) {
-		var mb = interaction.options.getUser('member');
-		var time = interaction.options.getInteger('time');
-		var value = interaction.options.getString('value');
-		var reason = interaction.options.getString('reason') ?? 'None';
-		// let temp = 0;
 
 		await interaction.deferReply({
 			ephemeral: true,
-		})
+		});
 
+		const mb = interaction.options.getUser('member');
+		const reason = interaction.options.getString('reason') ?? 'None';
 
-		const AuthorMember = interaction.guild.members.cache.find(member => member.id === interaction.user.id)
-		const targetMember = interaction.guild.members.cache.find(member => member.id === mb.id)
+		const AuthorMember = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
+		const targetMember = interaction.guild.members.cache.find(member => member.id === mb.id);
 
 
 		if (AuthorMember.roles.highest.position > targetMember.roles.highest.position) {
@@ -74,9 +49,11 @@ module.exports = {
 			var res = await interaction.followUp({
 				embeds: [
 					new EmbedBuilder()
+						.setTitle(`Remove timeout Action`)
+						.setDescription(`Remove timeout a member in this server`)
 						.setColor(client.get_color())
 						.addFields({
-							name: `Are you sure to timeout ${targetMember.displayName} with reason: ${reason}`,
+							name: `Are you sure to remove timeout ${targetMember.displayName} with reason: ${reason}`,
 							value: `You have 5 seconds to choose Yes or No`
 						})
 				],
@@ -93,32 +70,9 @@ module.exports = {
 					time: 5000
 				})
 
-
 				if (comfirmation.customId == 'Yes') {
-					var temp;
 
-					switch (value) {
-						case 'Seconds':
-							temp = time;
-							break;
-						case 'Minutes':
-							temp = time * 60;
-							break;
-						case 'Hours':
-							temp = time * 60 * 60;
-							break;
-						case 'Days':
-							temp = time * 60 * 60 * 24;
-							break;
-						case 'Weeks':
-							temp = time * 60 * 60 * 24 * 7;
-							break;
-						default:
-							temp = 0;
-							break;
-					}
-
-					await targetMember.timeout(temp * 1000, reason)
+					await targetMember.timeout(1, reason)
 
 					await comfirmation.update({
 						embeds: [
@@ -129,7 +83,7 @@ module.exports = {
 									value: `Reason: ${reason}`,
 								})
 						],
-						components : [],
+						components: [],
 						ephemeral: true,
 					})
 				}
@@ -158,6 +112,7 @@ module.exports = {
 								value: `Reason: Timeout`,
 							})
 					],
+
 					ephemeral: true,
 				})
 			}
@@ -167,16 +122,15 @@ module.exports = {
 			await interaction.followUp({
 				embeds: [
 					new EmbedBuilder()
+						.setDescription(`Remove timeout a member in this server`)
 						.setColor(client.get_color())
 						.addFields({
-							name: `You can't timeout ${targetMember.displayName}`,
+							name: `You can't remove timeout ${targetMember.displayName}`,
 							value: `Reason: Missing permission`,
 						})
 				],
 				ephemeral: true,
 			})
 		}
-
-
 	},
 };

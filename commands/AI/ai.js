@@ -1,119 +1,162 @@
-const { SlashCommandBuilder,  CommandInteraction } = require('discord.js');
-const { Getresponse } = require('./chatbot')
+const { CommandInteraction, Message } = require('discord.js');
+const { Getresponse } = require('./chatbot');
+const aclient = require('../../src/aclient');
+
+/**
+ * 
+ * @param {CommandInteraction} interaction 
+ * @param {Message} interaction
+ * @param {string} prompt 
+ * @param {string} chatbot 
+ */
+async function AI(interaction, prompt, chatbot) {
+	try {
+		if (interaction.deferred === true) {
+
+			const result = await Getresponse(prompt, chatbot.toLowerCase());
+			await chat_slash(interaction, result);
+		}
+		else {
+			const result = await Getresponse(prompt, chatbot.toLowerCase());
+			await chat_prefix(interaction, result);
+		}
+	}
+	catch (error) {
+		throw new Error(error);
+	}
+}
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('chat')
-		.setDescription('hat with chat bot!')
+	get_result: AI,
+};
 
-		.addStringOption(option1 =>
-			option1.setName('prompt')
-				.setDescription('What do you want to ask')
-				.setRequired(true))
 
-		.addBooleanOption(option2 =>
-			option2.setName('isprivate')
-				.setDescription('Do you want to ask private?')
-				.setRequired(true))
+/**
+ * 
+ * @param {aclient} client 
+ * @param {CommandInteraction} interaction 
+ * @param {string} prompt 
+ * @param {boolean} isPrivate 
+ * @param {string} chatbot 
+ */
 
-		.addStringOption(option3 =>
-			option3.setName('chatbot')
-				.setDescription('What chatbot you want to ask?')
-				.setRequired(true)
-				.addChoices(
-					{ name: 'Bing AI Creative', value: 'Creative' },
-					{ name: 'Bing AI Balanced', value: 'Balanced' },
-					{ name: 'Bing AI Precise', value: 'Precise' },
-					{ name: 'Google Bard', value: 'Bard' },
-				)
+async function chat_slash(interaction, result) {
 
-		),
-	/**
-	 * 
-	 * 
-	 * @param {CommandInteraction} interaction
-	 */
 
-	async execute(client, interaction) {
-		// const 
-		const prompt = interaction.options.getString('prompt')
-		const isPrivate = interaction.options.getBoolean('isprivate');
-		const chatbot = interaction.options.getString('chatbot');
+	try {
 
-		await interaction.deferReply({
-			ephemeral: isPrivate,
+		var char_limit = 1900,
+			res_mess = [],
+			i = 0,
+			res = "";
 
-		})
+		var response = result;
 
-		try {
-			// Run a Python file called script.py and await its output
-			const result = await Getresponse(prompt, chatbot);
-			// Print the result
-			// console.log(result);
+		if (response.length > char_limit) {
+			var temp = response.split('\n');
+			var length_temp = temp.length;
 
-			await new Promise((resolve) => setTimeout(resolve, 3000));
+			while (i < length_temp - 1) {
 
-			// await interaction.editReply(`${result}`);
-
-			var char_limit = 1900,
-				res_length = 0,
-				res_mess = [],
-				i = 0,
-				res = "";
-
-			var response = result;
-
-			// console.log()
-
-			if (response.length > char_limit) {
-				var temp = response.split('\n');
-				var length_temp = temp.length;
-
-				while (i < length_temp - 1) {
-
-					if (temp[i].indexOf('[Image ') == -1) {
-						if ((res + temp[i]).length < char_limit) {
-							res += temp[i] + '\n';
-						}
-						else {
-							res_mess.push(res);
-							res = temp[i] + '\n';
-						}
+				if (temp[i].indexOf('[Image ') == -1) {
+					if ((res + temp[i]).length < char_limit) {
+						res += temp[i] + '\n';
 					}
-					i++;
+					else {
+						res_mess.push(res);
+						res = temp[i] + '\n';
+					}
 				}
-
-				res_mess.push(res);
-				res_mess.forEach((string, index) => {
-					// console.log(string)
-					interaction.followUp({
-						content: `${string}`,
-						ephemeral: isPrivate,
-					})
-
-				})
-
+				i++;
 			}
-			else {
+
+			res_mess.push(res);
+			res_mess.forEach((string) => {
 				interaction.followUp({
-					content: `${response}`,
-					ephemeral: isPrivate,
+					content: `${string}`,
+					ephemeral: true,
 				})
-			}
+
+			})
 
 		}
-		catch (error) {
-			// Handle any errors
-			console.error(error);
-			await interaction.editReply({
-				content: `Something was wrong, please call my owner for help :<<`,
+		else {
+			interaction.followUp({
+				content: `${response}`,
 				ephemeral: true,
 			})
 		}
+	}
+
+	catch (error) {
+		console.error(error);
+		await interaction.followUp({
+			content: `Something was wrong, please call my owner for help :<<`,
+			ephemeral: true,
+		})
+	}
+}
+
+/**
+ * 
+ * @param {aclient} client 
+ * @param {CommandInteraction} interaction 
+ * @param {string} prompt 
+ * @param {string} chatbot 
+ */
+
+async function chat_prefix(interaction, result) {
 
 
+	try {
 
+		var char_limit = 1900,
+			res_mess = [],
+			i = 0,
+			res = "";
 
+		var response = result;
 
-	},
-};
+		if (response.length > char_limit) {
+			var temp = response.split('\n');
+			var length_temp = temp.length;
+
+			while (i < length_temp - 1) {
+
+				if (temp[i].indexOf('[Image ') == -1) {
+					if ((res + temp[i]).length < char_limit) {
+						res += temp[i] + '\n';
+					}
+					else {
+						res_mess.push(res);
+						res = temp[i] + '\n';
+					}
+				}
+				i++;
+			}
+
+			res_mess.push(res);
+			interaction.reply({
+				content: `${res_mess[0]}`,
+			})
+
+			for (var i = 1; i < res_mess.length; i++) {
+				interaction.reply({
+					content: `${res_mess[i]}`,
+				})
+			}
+
+		}
+		else {
+			interaction.reply({
+				content: `${response}`,
+			})
+		}
+	}
+	catch (error) {
+		console.error(error);
+		await interaction.editReply({
+			content: `Something was wrong, please call my owner for help :<<`,
+		})
+	}
+}

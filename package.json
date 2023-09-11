@@ -45,5 +45,8 @@
     "tweetnacl": "^1.0.3",
     "youtube-ext": "^1.1.10",
     "ytdl-core": "^4.11.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0-dev.20230910"
   }
 }

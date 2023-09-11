@@ -1,67 +1,60 @@
-const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, Client, EmbedBuilder } = require('discord.js');
-const { QueryType, useQueue, useMainPlayer } = require('discord-player')
+const { CommandInteraction, EmbedBuilder } = require('discord.js');
+const {  useQueue } = require('discord-player')
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('resume')
-        .setDescription('Resume play!'),
-    /**
-     * 
-     * 
-     * @param {CommandInteraction} interaction 
-     */
+module.exports = { resuming }
 
-    async execute(client, interaction) {
+/**
+ * 
+ * 
+ * @param {CommandInteraction} interaction 
+ */
 
-        await interaction.deferReply({
-            ephemeral: true
-        });
+async function resuming(client, interaction) {
 
-        const queue = useQueue(interaction.guildId);
+    const queue = useQueue(interaction.guildId);
 
-        if (queue.node.isPaused()) {
-            queue.node.setPaused(false)
+    if (queue.node.isPaused()) {
+        queue.node.setPaused(false)
 
-            await interaction.followUp({
-                embeds: [
-                    new EmbedBuilder()
-                        .setTitle(`I have resumed the queue`)
-                        .setThumbnail(queue.currentTrack.thumbnail)
-                        .setColor(client.get_color())
-                        .addFields([
-                            {
-                                name: `Current track:`,
-                                value: `${queue.currentTrack.title}`
-                            },
-                            {
-                                name: `Author:`,
-                                value: `${queue.currentTrack.author}`,
-                            },
-                            {
-                                name: `Now timestamp:`,
-                                value: `${queue.node.getTimestamp().current.label} / ${queue.node.getTimestamp().total.label}`
-                            }
-                        ])
-                ],
-                ephemeral: true,
-            });
+        return {
+            code: 200,
+            message: [
+                new EmbedBuilder()
+                    .setTitle(`I have resumed the queue`)
+                    .setThumbnail(queue.currentTrack.thumbnail)
+                    .setColor(client.get_color())
+                    .addFields([
+                        {
+                            name: `Current track:`,
+                            value: `${queue.currentTrack.title}`
+                        },
+                        {
+                            name: `Author:`,
+                            value: `${queue.currentTrack.author}`,
+                        },
+                        {
+                            name: `Now timestamp:`,
+                            value: `${queue.node.getTimestamp().current.label} / ${queue.node.getTimestamp().total.label}`
+                        }
+                    ])
+            ]
         }
-        else {
-            await interaction.followUp({
-                embeds: [
-                    new EmbedBuilder()
-                        .setColor(client.get_color())
-                        .addFields([
-                            {
-                                name: `I can't resume the queue`,
-                                value: `Reason : I'm not pausing now`
-                            }
-                        ])
-                ],
-                ephemeral: true,
-            });
+    }
+    else {
+        return {
+            code: 500,
+            message: [
+                new EmbedBuilder()
+                    .setColor(client.get_color())
+                    .addFields([
+                        {
+                            name: `I can't resume the queue`,
+                            value: `Reason : I'm not pausing now`
+                        }
+                    ])
+            ]
         }
+    }
 
 
-    },
-};
+}

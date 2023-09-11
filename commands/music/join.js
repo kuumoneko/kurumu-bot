@@ -1,71 +1,63 @@
-const { SlashCommandBuilder, CommandInteraction, EmbedBuilder } = require('discord.js');
+const { CommandInteraction, EmbedBuilder } = require('discord.js');
 const { joinVoiceChannel } = require('@discordjs/voice');
+
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('join')
-		.setDescription('Join the your voice channel!'),
+	join_voice
+};
 
-	/**
-	 * 
-	 * @param {CommandInteraction} interaction 
-	 */
+/**
+ * 
+ * @param {CommandInteraction} interaction 
+ */
 
-	async execute(client, interaction) {
+async function join_voice(client, interaction) {
 
-		await interaction.deferReply({
-			ephemeral: true,
-		})
+	const voiceChannel = interaction.member.voice.channel;
 
-		const guild = client.client.guilds.cache.get(interaction.guildId);
-		const member = guild.members.cache.get(interaction.user.id);
-		const voiceChannel = member.voice.channel;
-
-		if (voiceChannel) {
-			try {
-				joinVoiceChannel({
-					channelId: voiceChannel.id,
-					guildId: guild.id,
-					adapterCreator: guild.voiceAdapterCreator,
-				});
-				await interaction.followUp({
-					embeds: [
-						new EmbedBuilder()
-							.setColor(client.get_color())
-							.addFields({
-								name: `I have joined a voice channel`,
-								value: `Voice channel: ${voiceChannel}`,
-							})
-					],
-					ephemeral: true,
-				});
-			}
-			catch (error) {
-				await interaction.followUp({
-					embeds: [
-						new EmbedBuilder()
-							.setColor(client.get_color())
-							.addFields({
-								name: `I can't join a voice channel`,
-								value: `Error: ${error}`,
-							})
-					],
-					ephemeral: true,
-				});
-			}
+	if (voiceChannel) {
+		try {
+			joinVoiceChannel({
+				channelId: voiceChannel.id,
+				guildId: interaction.guildId,
+				adapterCreator: interaction.guild.voiceAdapterCreator,
+			});
+			return {
+				code: 200,
+				message: [
+					new EmbedBuilder()
+						.setColor(client.get_color())
+						.addFields({
+							name: `I have joined a voice channel`,
+							value: `Voice channel: ${interaction.member.voice.channel}`,
+						})
+				],
+			};
 		}
-		else {
-			await interaction.reply({
-				embeds: [
+		catch (e) {
+			return {
+				code: 500,
+				message: [
 					new EmbedBuilder()
 						.setColor(client.get_color())
 						.addFields({
 							name: `I can't join a voice channel`,
-							value: `Error: Can't find your voice channel`,
+							value: `Error: ${e}`,
 						})
 				],
-				ephemeral: true,
-			});
+			};
 		}
-
 	}
-};
+	else {
+		return {
+			code: 404,
+			message: [
+				new EmbedBuilder()
+					.setColor(client.get_color())
+					.addFields({
+						name: `I can't join a voice channel`,
+						value: `Error: Can't find your voice channel`,
+					})
+			],
+		};
+	}
+}

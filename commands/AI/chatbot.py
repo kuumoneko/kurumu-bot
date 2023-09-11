@@ -4,12 +4,10 @@ from EdgeGPT.EdgeGPT import ConversationStyle
 import json
 import asyncio
 from asgiref.sync import sync_to_async
-from datetime import datetime
 import re
 
 config = json.loads(
-    
-    open('.\\database\\config.json' , encoding="utf-8").read())
+    open('.\\database\\config.json', encoding="utf-8").read())
 
 
 edgechatbot = EdgeChatBot(cookies=config['cookies'])
@@ -27,21 +25,21 @@ async def testing(mess, mode):
 
     output: str = ""
 
-    if mode == "Bard":
+    if mode == "bard":
         res = await sync_to_async(bardchatbot.ask)(mess)
         output += res['content']
 
-    elif mode == "Creative":
+    elif mode == "creative":
         res = await edgechatbot.ask(prompt=mess,
                                     conversation_style=ConversationStyle.creative,
                                     simplify_response=True)
         output += res['text']
-    elif mode == "Balanced":
+    elif mode == "balanced":
         res = await edgechatbot.ask(prompt=mess,
                                     conversation_style=ConversationStyle.balanced,
                                     simplify_response=True)
         output += res['text']
-    elif mode == "Precise":
+    elif mode == "precise":
         res = await edgechatbot.ask(prompt=mess,
                                     conversation_style=ConversationStyle.precise,
                                     simplify_response=True)
@@ -70,11 +68,6 @@ async def testing(mess, mode):
         output = output.replace(temp, "")
 
     print(output)
-
-    # end = datetime.now()
-
-    # print(end-  start)
-    # pass
 
 
 def check(mess, mode):

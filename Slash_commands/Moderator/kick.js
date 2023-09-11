@@ -1,9 +1,9 @@
-const { SlashCommandBuilder, Client, CommandInteraction, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder,  CommandInteraction, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('kick')
-		.setDescription('Kick a member!')
+		.setDescription('Kick a member! (only use slash command)')
 		.addUserOption(member =>
 			member.setName('member')
 				.setDescription('Who do you want to call?')

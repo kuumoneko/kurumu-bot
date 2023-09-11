@@ -4,7 +4,7 @@ const { SlashCommandBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, Per
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('bans')
-		.setDescription('See bans list and unban member!')
+		.setDescription('See bans list and unban member! (only use slash command)')
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 	/**
 	 * 

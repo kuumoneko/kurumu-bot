@@ -1,9 +1,9 @@
-const { PermissionFlagsBits, CommandInteraction, SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const { PermissionFlagsBits, CommandInteraction, SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ban')
-		.setDescription('Ban a member!')
+		.setDescription('Ban a member! (only use slash command)')
 
 		.addUserOption(member =>
 			member.setName('member')
@@ -33,38 +33,26 @@ module.exports = {
 
 		if (AuthorMember.roles.highest.position > targetMember.roles.highest.position) {
 			try {
-
 				await targetMember.ban({ reason: reason });
-
-
-				await interaction.followUp({
-					embeds: [new EmbedBuilder()
-						.setColor(client.get_color())
-						.addFields({
-							name: `Yes, you have banned ${AuthorMember.nickname}`,
-							value: `Reason banned: ${reason}`
-						})
-					],
-					ephemeral: true
-				});
-			}
-			catch (e) {
-				await interaction.followUp({
-					embeds: [
-						new EmbedBuilder()
+				if (interaction.deferred == true) {
+					await interaction.followUp({
+						embeds: [new EmbedBuilder()
 							.setColor(client.get_color())
 							.addFields({
-								name: `Nuhh, I catch an error while doing your command :<`,
-								value: `Error: ${e}`
+								name: `Yes, you have banned ${AuthorMember.nickname}`,
+								value: `Reason banned: ${reason}`
 							})
-					],
-
-					ephemeral: true
-				});
+						],
+						ephemeral: true
+					});
+				}
+			}
+			catch (e) {
+				throw new Error(e)
 			}
 		}
 		else {
-			await interaction.followUp({
+			await interaction.reply({
 				embeds: [new EmbedBuilder()
 					.setColor(client.get_color())
 					.addFields({
@@ -72,7 +60,6 @@ module.exports = {
 						value: `Reason : Missing permission`
 					})
 				],
-				ephemeral: true,
 			});
 		}
 	},

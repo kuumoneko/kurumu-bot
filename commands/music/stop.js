@@ -1,52 +1,44 @@
-const { SlashCommandBuilder, CommandInteraction, EmbedBuilder } = require('discord.js');
+const { CommandInteraction, EmbedBuilder } = require('discord.js');
 const { useQueue } = require('discord-player')
 
-module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('stop')
-		.setDescription('Stop play and leave!'),
-	/**
-	 * 
-	 * 
-	 * @param {CommandInteraction} interaction 
-	 */
+module.exports = { stopping }
+/**
+ * 
+ * 
+ * @param {CommandInteraction} interaction 
+ */
 
-	async execute(client, interaction) {
+async function stopping(client, interaction) {
+	const queue = useQueue(interaction.guildId);
 
-		await interaction.deferReply()
+	if (!queue.deleted) {
+		const channell = queue.channel;
+		client.ctrack[interaction.guildId] = []
 
-		const queue = useQueue(interaction.guildId);
+		queue.setRepeatMode(0);
 
-		if (!queue.deleted) {
-			const channell = queue.channel;
-			client.ctrack[interaction.guildId] = []
+		queue.clear();
 
-			queue.setRepeatMode(0);
+		queue.node.stop();
 
-			queue.clear();
+		queue.delete();
 
-			queue.node.stop();
-
-			queue.delete();
-
-			await interaction.followUp({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(client.get_color())
-						.setTitle(`I have stopped and leaved ${channell}`)
-				],
-				ephemeral: true,
-			});
-			return;
-		}
-
-		await interaction.followUp({
-			embeds: [
+		return {
+			code: 200,
+			message: [
 				new EmbedBuilder()
 					.setColor(client.get_color())
-					.setTitle(`I have stopped and leaved Voice channel`)
+					.setTitle(`I have stopped and leaved ${channell}`)
 			],
-			ephemeral: true,
-		});
-	},
-};
+		}
+	}
+
+	return {
+		code: 200,
+		message: [
+			new EmbedBuilder()
+				.setColor(client.get_color())
+				.setTitle(`I have stopped and leaved Voice channel`)
+		],
+	}
+}

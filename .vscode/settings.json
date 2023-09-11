@@ -10,6 +10,8 @@
     "*.exe": "default",
     "*.pyc": "default"
   },
+  "git.enabled": true,
+  
   "liveServer.settings.donotShowInfoMsg": true,
   "launch": {
     "configurations": [],
@@ -58,7 +60,7 @@
   "python.testing.pytestArgs": ["."],
   "python.testing.unittestEnabled": false,
   "python.testing.pytestEnabled": true,
-  "python.formatting.provider": "autopep8",
+  "python.formatting.provider": "black",
 
   "files.associations": {
     "iostream": "cpp",
@@ -86,7 +88,6 @@
     "en"
   ],
   "spellright.documentTypes": [
-    "latex",
-    "plaintext"
+    "latex"
   ]
 }

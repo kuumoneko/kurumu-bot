@@ -1,10 +1,12 @@
 const discord = require('discord.js')
 const map = require('collections/map.js')
 const { Player } = require('discord-player')
+const { prefix } = require('../database/config.json');
 
 class aclient {
     constructor() {
-        this.version = "v0.6.0"
+        this.version = "v0.7.0"
+        this.prefix = prefix
         this.client = new discord.Client({
             intents: Object.keys(discord.GatewayIntentBits).map((a) => {
                 return discord.GatewayIntentBits[a];
@@ -19,6 +21,8 @@ class aclient {
         })
 
 
+
+        this.AI_queue = [];
         this.ctrack = new map();
         this.ptrack = new map();
 

@@ -1,9 +1,9 @@
-const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction,  EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, EmbedBuilder } = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('chnick')
-		.setDescription('Change nickname for a member!')
+		.setDescription('Change nickname for a member! (only use slash command)')
 		.addUserOption(member =>
 			member.setName('member')
 				.setDescription('Who do you want to call?')
@@ -32,7 +32,6 @@ module.exports = {
 
 		var Target = interaction.guild.members.cache.find(member => member.id === mb.id);
 		var user = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
-		var clientt = interaction.guild.members.cache.find(member => member.id === client.client.user.id);
 
 		if ((user == Target) || (user.roles.highest.position > Target.roles.highest.position && user.permissions.has(PermissionFlagsBits.ManageNicknames) == true)) {
 			Target.edit({

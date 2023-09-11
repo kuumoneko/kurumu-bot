@@ -1,8 +1,7 @@
 const { CommandInteraction } = require('discord.js');
 const { useQueue, useMainPlayer } = require('discord-player')
 const _ = require('lodash')
-
-const YOUTUBE_API_KEY = 'AIzaSyAunPKDmswMpyUiX2PdVqF9_MqF8DJA7GI';
+const { YOUTUBE_API_KEY } = require('../../../database/config.json')
 
 // get a similar song from YouTube based on a video ID
 async function getSimilarSong(videoId) {
@@ -30,6 +29,14 @@ async function playing(client, interaction) {
 
     const check = useQueue(interaction.guildId);
 
+    var user;
+    if (interaction.deferred) {
+        user = interaction.user;
+    }
+    else {
+        user = interaction.author;
+    }
+
     if (check && check.node.isPlaying()) {
         return;
     }
@@ -38,15 +45,12 @@ async function playing(client, interaction) {
 
     while (client.ctrack[interaction.guildId].length > 0) {
 
-        const urrl = client.ctrack[interaction.guildId][0] ?? undefined;
+        const urrl = client.ctrack[interaction.guildId][0] ?? 'None';
 
-
-
-        if (urrl === undefined)
+        if (urrl === 'None')
             return;
 
         await player.play(interaction.member.voice.channel, urrl, {
-            requestedBy: interaction.user,
             nodeOptions: {
                 leaveOnEmpty: true,
                 leaveOnEmptyCooldown: 300_000,
@@ -60,9 +64,7 @@ async function playing(client, interaction) {
                 bufferingTimeout: 3000,
                 connectionTimeout: 30000,
                 metadata: {
-                    channel: interaction.channel,
-                    client: interaction.client,
-                    requestedBy: interaction.user
+                    requestedBy: user
                 }
             }
         });
@@ -70,14 +72,16 @@ async function playing(client, interaction) {
         await sleep(3000)
 
         const queue = useQueue(interaction.guildId);
-        const curr = queue.currentTrack.title;
+        const curr = queue.currentTrack;
 
         while (queue.node.isPlaying()) {
             await sleep(100);
         }
 
+        // console.log(client.ctrack[interaction.guildId])
+
         if (client.ctrack[interaction.guildId].length > 0)
-            if (((await useMainPlayer().search(client.ctrack[interaction.guildId][0]))._data.tracks[0].title == curr)) {
+            if (((await useMainPlayer().search(client.ctrack[interaction.guildId][0]))._data.tracks[0] == curr)) {
                 if (client.isloop[interaction.guildId] === '2') {
                     const first = client.ctrack[interaction.guildId].shift();
                     client.ctrack[interaction.guildId].push(first)
@@ -86,8 +90,6 @@ async function playing(client, interaction) {
                     const first = client.ctrack[interaction.guildId].shift();
                     client.ptrack[interaction.guildId].push(first)
                 }
-
-
             }
 
         if (client.isloop[interaction.guildId] === '3' && client.ctrack[interaction.guildId].length === 0) {
@@ -103,5 +105,5 @@ function sleep(ms) {
 }
 
 module.exports = {
-    playing: playing,
+    playing,
 };
