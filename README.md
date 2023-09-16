@@ -2,11 +2,13 @@
 
 > Discord bot using javascript
 
-# Version 0.7.0
+# Version 0.7.0 - beta 2
 
-> Support Prefix_command
+> Change `Moderator` to bot Processor
 
-> Prefix: `~`
+> Add command `mute`, `unmute`, `deafen`, `undeafen`
+
+> Support catching error while running in `Moderator`
 
 # install
 

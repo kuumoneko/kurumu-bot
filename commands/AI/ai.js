@@ -51,6 +51,7 @@ async function chat_slash(interaction, result) {
 			res = "";
 
 		var response = result;
+		response = response.split('}}')[1];
 
 		if (response.length > char_limit) {
 			var temp = response.split('\n');
@@ -116,6 +117,9 @@ async function chat_prefix(interaction, result) {
 			res = "";
 
 		var response = result;
+
+		// console.log(response.split('}}'))
+		response = response.split('}}')[1];
 
 		if (response.length > char_limit) {
 			var temp = response.split('\n');

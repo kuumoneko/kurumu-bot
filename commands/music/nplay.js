@@ -48,7 +48,7 @@ async function now_playing(client, interaction) {
                     .addFields([
                         {
                             name: `I can't get current track`,
-                            value: `Reason: I'm not playing anything now`,
+                            value: `Error: I'm not playing anything now`,
                         },
                     ])
             ],

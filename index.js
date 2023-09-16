@@ -40,6 +40,7 @@ for (const folder of commandFolders) {
 	}
 }
 
+
 const rest = new REST().setToken(token);
 
 (async () => {

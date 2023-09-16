@@ -1,4 +1,5 @@
-const { PermissionFlagsBits, CommandInteraction, SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js')
+const { PermissionFlagsBits, CommandInteraction, SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { timeout_member } = require('../../Commands/Moderator/timeout');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -54,127 +55,11 @@ module.exports = {
 		const AuthorMember = interaction.guild.members.cache.find(member => member.id === interaction.user.id)
 		const targetMember = interaction.guild.members.cache.find(member => member.id === mb.id)
 
+		const result = await timeout_member(client, interaction, AuthorMember, targetMember, time, value , reason);
 
-		if (AuthorMember.roles.highest.position > targetMember.roles.highest.position) {
-
-			var component = new ActionRowBuilder()
-				.setComponents([
-					new ButtonBuilder()
-						.setCustomId('Yes')
-						.setLabel('✅')
-						.setStyle(ButtonStyle.Success),
-					new ButtonBuilder()
-						.setCustomId('No')
-						.setLabel('❌')
-						.setStyle(ButtonStyle.Danger)
-				]);
-
-			var res = await interaction.followUp({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(client.get_color())
-						.addFields({
-							name: `Are you sure to timeout ${targetMember.displayName} with reason: ${reason}`,
-							value: `You have 5 seconds to choose Yes or No`
-						})
-				],
-				components: [component],
-				ephemeral: true
-			});
-
-
-			const collectorFilter = i => i.user.id === interaction.user.id;
-
-			try {
-				const comfirmation = await res.awaitMessageComponent({
-					filter: collectorFilter,
-					time: 5000
-				})
-
-
-				if (comfirmation.customId == 'Yes') {
-					var temp;
-
-					switch (value) {
-						case 'Seconds':
-							temp = time;
-							break;
-						case 'Minutes':
-							temp = time * 60;
-							break;
-						case 'Hours':
-							temp = time * 60 * 60;
-							break;
-						case 'Days':
-							temp = time * 60 * 60 * 24;
-							break;
-						case 'Weeks':
-							temp = time * 60 * 60 * 24 * 7;
-							break;
-						default:
-							temp = 0;
-							break;
-					}
-
-					await targetMember.timeout(temp * 1000, reason)
-
-					await comfirmation.update({
-						embeds: [
-							new EmbedBuilder()
-								.setColor(client.get_color())
-								.addFields({
-									name: `You have timeouted ${targetMember.displayName}`,
-									value: `Reason: ${reason}`,
-								})
-						],
-						components : [],
-						ephemeral: true,
-					})
-				}
-				else {
-					await comfirmation.update({
-						embeds: [
-							new EmbedBuilder()
-								.setColor(client.get_color())
-								.addFields({
-									name: `You have cancled this action`,
-									value: `Reason: I don't know :)`,
-								})
-						],
-						components: [],
-						ephemeral: true,
-					})
-				}
-			}
-			catch (e) {
-				await interaction.followUp({
-					embeds: [
-						new EmbedBuilder()
-							.setColor(client.get_color())
-							.addFields({
-								name: `You have cancled this action`,
-								value: `Reason: Timeout`,
-							})
-					],
-					ephemeral: true,
-				})
-			}
-
-		}
-		else {
-			await interaction.followUp({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(client.get_color())
-						.addFields({
-							name: `You can't timeout ${targetMember.displayName}`,
-							value: `Reason: Missing permission`,
-						})
-				],
-				ephemeral: true,
-			})
-		}
-
-
+		await interaction.followUp({
+			embeds: result.message,
+			ephemeral: true,
+		})
 	},
 };

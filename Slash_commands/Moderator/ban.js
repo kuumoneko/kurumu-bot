@@ -1,4 +1,5 @@
 const { PermissionFlagsBits, CommandInteraction, SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { ban_member } = require('../../Commands/Moderator/ban');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -25,42 +26,18 @@ module.exports = {
 			ephemeral: true
 		});
 
+
 		const mb = interaction.options.getUser('member');
 		const reason = interaction.options.getString('reason');
 
 		const AuthorMember = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
 		const targetMember = interaction.guild.members.cache.find(member => member.id === mb.id);
 
-		if (AuthorMember.roles.highest.position > targetMember.roles.highest.position) {
-			try {
-				await targetMember.ban({ reason: reason });
-				if (interaction.deferred == true) {
-					await interaction.followUp({
-						embeds: [new EmbedBuilder()
-							.setColor(client.get_color())
-							.addFields({
-								name: `Yes, you have banned ${AuthorMember.nickname}`,
-								value: `Reason banned: ${reason}`
-							})
-						],
-						ephemeral: true
-					});
-				}
-			}
-			catch (e) {
-				throw new Error(e)
-			}
-		}
-		else {
-			await interaction.reply({
-				embeds: [new EmbedBuilder()
-					.setColor(client.get_color())
-					.addFields({
-						name: `You can't do this action`,
-						value: `Reason : Missing permission`
-					})
-				],
-			});
-		}
+		const result = await ban_member(client, interaction, AuthorMember, targetMember, reason);
+
+		await interaction.followUp({
+			embeds: result.message,
+			ephemeral: true,
+		})
 	},
 };

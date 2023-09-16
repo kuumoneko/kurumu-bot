@@ -10,15 +10,26 @@ config = json.loads(
     open('.\\database\\config.json', encoding="utf-8").read())
 
 
-edgechatbot = EdgeChatBot(cookies=config['cookies'])
+
 
 Secure_1PSID = config['Secure_1PSID']
 Secure_1PSIDTS = config['Secure_1PSIDTS']
 
-bardchatbot = BardChatBot(Secure_1PSID, Secure_1PSIDTS)
+try:    
+    edgechatbot = EdgeChatBot(cookies=config['cookies'])
+except Exception as e:
+    er = e
+    
+    
+try:    
+    bardchatbot = BardChatBot(Secure_1PSID, Secure_1PSIDTS)
+except Exception as e:
+    er =e
+
+
 
 mess = "PC config for IT developer"
-mode = "Bard"
+mode = "creative"
 
 
 async def testing(mess, mode):
@@ -26,10 +37,12 @@ async def testing(mess, mode):
     output: str = ""
 
     if mode == "bard":
+        
         res = await sync_to_async(bardchatbot.ask)(mess)
         output += res['content']
 
     elif mode == "creative":
+        
         res = await edgechatbot.ask(prompt=mess,
                                     conversation_style=ConversationStyle.creative,
                                     simplify_response=True)
@@ -44,6 +57,7 @@ async def testing(mess, mode):
                                     conversation_style=ConversationStyle.precise,
                                     simplify_response=True)
         output += res['text']
+        
 
     emoji_pattern = re.compile(
         "["
@@ -54,6 +68,10 @@ async def testing(mess, mode):
         "]+",
         flags=re.UNICODE,
     )
+    
+    if (output.find('}') != -1):
+        output = output.split('}')[1];
+    
 
     output = emoji_pattern.sub("", output)
 

@@ -1,4 +1,5 @@
-const { SlashCommandBuilder,  CommandInteraction, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, CommandInteraction, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { chrole_member } = require('../../Commands/Moderator/chrole');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -28,45 +29,23 @@ module.exports = {
 			ephemeral: true,
 		});
 
-		var Target = interaction.guild.members.cache.find(member => member.id === mb.id);
-		var user = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
-		var rolee = interaction.guild.roles.cache.find(role => role.name === rl.name);
+		try {
+			var targetMember = interaction.guild.members.cache.find(member => member.id === mb.id);
+			var AuthorMember = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
+			var rolee = interaction.guild.roles.cache.find(role => role.name === rl.name);
 
-		if (user.roles.highest.position > Target.roles.highest.position && user.permissions.has(PermissionFlagsBits.ManageNicknames) == true && interaction.guild.roles.cache.find(role => role.name === rl.name) !== undefined) {
-
-			if (Target.roles.cache.find(role => role.id === rolee.id) === undefined)
-				Target.roles.add(rolee);
-			else
-				Target.roles.remove(rolee);
+			const result = await chrole_member(client, interaction, AuthorMember, targetMember, rolee);
 
 			await interaction.followUp({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(client.get_color())
-						.addFields(
-							{
-								name: `You have changed role of ${Target.nickname} in role ${rolee.name}`,
-								value: 'Successfully changed',
-							}
-						)
-				],
-				ephemeral: true,
-			});
-		}
-		else {
-			await interaction.followUp({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(client.get_color())
-						.addFields(
-							{
-								name: `You can't do that activity:<`,
-								value: 'Reason: Missing permission',
-							}
-						)
-				],
+				embeds: result.message,
 				ephemeral: true,
 			})
+			return;
+		}
+
+		catch (e) {
+			console.log(e)
+			return
 		}
 	},
 };

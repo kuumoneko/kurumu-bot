@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, PermissionFlagsBits, CommandInteraction, EmbedBuilder } = require('discord.js');
+const { chnick_member } = require('../../Commands/Moderator/chnick');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -30,43 +31,16 @@ module.exports = {
 		const nick = interaction.options.getString('nick') ?? "";
 
 
-		var Target = interaction.guild.members.cache.find(member => member.id === mb.id);
-		var user = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
+		var targetMember = interaction.guild.members.cache.find(member => member.id === mb.id);
+		var AuthorMember = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
 
-		if ((user == Target) || (user.roles.highest.position > Target.roles.highest.position && user.permissions.has(PermissionFlagsBits.ManageNicknames) == true)) {
-			Target.edit({
-				nick: nick,
-			});
-			await interaction.followUp({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(client.get_color())
-						.addFields(
-							{
-								name: `You have changed nickname of ${Target.displayName} to ${(nick === "") ? "default" : nick}`,
-								value: 'Successfully changed',
-							}
-						)
-				],
-				ephemeral: true,
-			});
+		const result = await chnick_member(client, interaction, AuthorMember, targetMember, nick);
 
-		}
-		else {
-			await interaction.followUp({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(client.get_color())
-						.addFields(
-							{
-								name: `You can't change nickname of ${Target.displayName} to ${(nick === "") ? "default" : nick}`,
-								value: 'Reason: Missing permission',
-							}
-						)
-				],
-				ephemeral: true,
-			})
-		}
+		await interaction.followUp({
+			embeds: result.message,
+			ephemeral: true,
+		})
+		return;
 
 	},
 };

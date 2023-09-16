@@ -1,4 +1,5 @@
-const { SlashCommandBuilder,  CommandInteraction, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, CommandInteraction, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { kick_member } = require('../../Commands/Moderator/kick');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -26,44 +27,16 @@ module.exports = {
 		const mb = interaction.options.getUser('member');
 		const reason = interaction.options.getString('reason') ?? 'None';
 
-		var Target = interaction.guild.members.cache.find(member => member.id === mb.id);
-		var user = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
+		var targetMember = interaction.guild.members.cache.find(member => member.id === mb.id);
+		var AuthorMember = interaction.guild.members.cache.find(member => member.id === interaction.user.id);
 
+		const result = await kick_member(client, interaction, AuthorMember, targetMember, reason);
 
-		if (user.roles.highest.position > Target.roles.highest.position) {
-			Target.kick({
-				reason: reason,
-			})
-
-			await interaction.followUp({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(client.get_color())
-						.addFields(
-							{
-								name: `You have kicked ${Target.displayName} `,
-								value: `Reason: ${reason}`,
-							}
-						)
-				],
-				ephemeral: true,
-			})
-		}
-		else {
-			await interaction.followUp({
-				embeds: [
-					new EmbedBuilder()
-						.setColor(client.get_color())
-						.addFields(
-							{
-								name: `You can't kick ${Target.displayName} `,
-								value: `Reason: Missing permission`,
-							}
-						)
-				],
-				ephemeral: true,
-			})
-		}
+		await interaction.followUp({
+			embeds: result.message,
+			ephemeral: true,
+		})
+		return;
 
 
 	},
