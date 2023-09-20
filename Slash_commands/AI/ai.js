@@ -34,7 +34,65 @@ module.exports = {
 		await interaction.deferReply({
 			ephemeral: true,
 		})
+		var result = await get_result(client, interaction, prompt, chatbot.toLowerCase());
 
-		await get_result(interaction, prompt, chatbot);
+		try {
+
+			var char_limit = 1900,
+				res_mess = [],
+				i = 0,
+				res = "";
+
+			var response = result;
+			// var b = "";
+			// if (b.indexOf('}}') != -1) {
+			// 	response = response.split('}}')[1];
+			// }
+			// var a = response.split('}}');
+			
+
+			if (response.length > char_limit) {
+				var temp = response.split('\n');
+				var length_temp = temp.length;
+
+				while (i < length_temp - 1) {
+
+					if (temp[i].indexOf('[Image ') == -1) {
+						if ((res + temp[i]).length < char_limit) {
+							res += temp[i] + '\n';
+						}
+						else {
+							res_mess.push(res);
+							res = temp[i] + '\n';
+						}
+					}
+					i++;
+				}
+
+				res_mess.push(res);
+				res_mess.forEach((string) => {
+					interaction.followUp({
+						content: `${string}`,
+						ephemeral: true,
+					})
+
+				})
+
+			}
+			else {
+				interaction.followUp({
+					content: `${response}`,
+					ephemeral: true,
+				})
+			}
+		}
+
+		catch (error) {
+			console.error(error);
+			await interaction.followUp({
+				content: `Something was wrong, please call my owner for help :<<`,
+				ephemeral: true,
+			})
+		}
 	},
 };

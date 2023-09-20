@@ -2,80 +2,93 @@
 
 > Discord bot using javascript
 
-# Version 0.7.0 - beta 2
+# Version 0.8.0
 
-> Change `Moderator` to bot Processor
+> Using `bingai-js` and `googlebard-js` for `AI` commands
 
-> Add command `mute`, `unmute`, `deafen`, `undeafen`
+> Fix bug in v0.7.0
 
-> Support catching error while running in `Moderator`
+> Update `README.md`
 
 # install
 
 Using `npm install` for installing all node js package
 
-Using `pip install -r requirements.txt` for installing all python package
-
 # Before starting
 
-I. Create a folder `data_base` (You will save discord token, bing AI cookies and google Bard cookies in this folder)
-II. Create file named `config.js` in `data_base`
+1. Create a folder `database` (You will save discord token, bing AI cookies and google Bard cookies in this folder)
+2. Create file named `config.js` in `database`
 
-```
+```json
 {
-  "token": "",
-  "Secure_1PSID": "",
-  "Secure_1PSIDTS": "",
-  "prefix": "",
-  "cookies":
-}
+  "token": "Your-Bot-Token",
+  "clientId": "Your-Bot-ClientId",
+  "prefix": "Your-prefix",
 
+  "cookie_U": "Your-cookie-_U",
+  "YOUTUBE_API_KEY": "Your-Youtube-API-key"
+}
 ```
 
-III. Choose your prefix in `prefix`
+3. Choose your prefix in `prefix`
 
-IV. Setup cookies extension
+4. Setup cookies extension
 
 > Go to your web browser
 
-> Download an extension for reading cookies
+> Download an extension for reading cookies ( I used `Cookie-Editor` )
 
-> You can use any cookies exxtension to get cookies
+> You can use any cookies extension to get cookies
 
-## Get discord bot Token
+## Get discord bot
 
-1. Go to https://discord.com/developers/applications/
-2. Chose your discord bot
-3. Chose `Bot`
-4. Chose `Reset Token` and follow the directions, then copy the token
-5. Go to `config.js`
-6. Paste your Token to variable named `token`
+1. Discord bot token
 
-## Get Bing AI cookies
+> Go to https://discord.com/developers/applications/
 
-1. Go to https://bing.com/chat
-2. Run your `cookies extension`
-3. Copy all cookies by using `export by json` to your clipboard
-4. Go to `config.json`
-5. Paste the cookies to `cookies`
+> Chose your discord bot
 
-## Get Google Bard cookies
+> Chose `Bot`
 
-1. Go to https://bard.google.com/
-2. Run your `cookies extension`
-3. Copy value of `Secure_1PSID` to your clipboard
-4. Copy value of `Secure_1PSIDTS` to your clipboard
-5. Go to `config.js`
-6. Paste value of `Secure_1PSID` to variable named `Secure_1PSID`
-7. Paste value of `Secure_1PSIDTS` to variable named `Secure_1PSIDTS`
+> Chose `Reset Token` and follow the directions, then copy the token
 
-## Get ffmpeg
+> Go to `database/config.js`
 
-1. Go to https://ffmpeg.org/download.html
-2. Download latest version for your OS system
-3. Make sure that ffmpeg can run in your terminal or cmd; if you use Windows, you should add to `Path`
+> Paste your Token to variable named `token`
 
-V. Note:
+## Get Bing AI cookies:
+
+> Go to https://bing.com/chat
+
+> Run your cookies extension
+
+> Copy value of cookies named `_U`
+
+> Go to `database/config.json`
+
+> Paste the cookies to `cookie_U`
+
+## Get Google Bard cookies:
+
+> Go to https://bard.google.com/
+
+> Run your `cookies extension`
+
+> Copy all cookies to JSON to your clipboard
+
+> Go to `database/cookies.js`
+
+> Paste your cookies to this file
+
+## Get ffmpeg:
+
+> Go to https://ffmpeg.org/download.html
+
+> Download latest version for your OS system
+
+> Make sure that ffmpeg can run in your terminal or cmd. If you use Windows, you should add to Your environment variables
+
+# Note:
 
 > Before running your bot, please update Bing AI cookies and Google Bard cookies if you don't want to have some error when running:>
 

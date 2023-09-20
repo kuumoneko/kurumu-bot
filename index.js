@@ -14,14 +14,20 @@ const { ai, joinn, leavee, nplayy, pause_music, resume_prefix, queue_prefix, set
 
 const kclient = new aclient()
 
-async function check(client) {
+/**
+ * 
+ * @param {aclient} client 
+ */
+async function setup(client) {
 	await client.player.extractors.loadDefault();
 	await client.player.extractors.register(SpotifyExtractor, {});
 	await client.player.extractors.register(SoundCloudExtractor, {});
 	await client.player.extractors.register(YouTubeExtractor, {});
+	// await client.EdgeChatBot.init();
+	await client.BardChatBot.getAPI();
 }
 
-check(kclient)
+setup(kclient)
 
 const commands = [];
 const foldersPath = path.join(__dirname, 'Slash_commands');
@@ -131,7 +137,7 @@ kclient.client.on('messageCreate', async (ctx) => {
 			temp.forEach(str => {
 				prompt += str + ' '
 			})
-			await ai(ctx, prompt, chatbot);
+			await ai(kclient, ctx, prompt, chatbot);
 		}
 
 		if (command === 'join') {
