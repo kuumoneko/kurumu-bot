@@ -2,11 +2,11 @@
 
 > Discord bot using javascript
 
-# Version 0.8.0
+# Version 0.9.0 beta 1
 
-> Using `bingai-js` and `googlebard-js` for `AI` commands
+> Using new `googlebard-js` for `AI` commands
 
-> Fix bug in v0.7.0
+> Fix bug in v0.8.0
 
 > Update `README.md`
 
@@ -23,8 +23,8 @@ Using `npm install` for installing all node js package
 {
   "token": "Your-Bot-Token",
   "clientId": "Your-Bot-ClientId",
-  "prefix": "Your-prefix",
-
+  "__Secure_1PSID": "Your-cookie-__Secure-1PSID",
+  "__Secure_1PSIDTS": "Your-cookie-__Secure-1PSIDTS",
   "cookie_U": "Your-cookie-_U",
   "YOUTUBE_API_KEY": "Your-Youtube-API-key"
 }
@@ -40,7 +40,7 @@ Using `npm install` for installing all node js package
 
 > You can use any cookies extension to get cookies
 
-## Get discord bot
+## Get discord bot token and clientId
 
 1. Discord bot token
 
@@ -56,13 +56,27 @@ Using `npm install` for installing all node js package
 
 > Paste your Token to variable named `token`
 
+2. Discord bot clientId
+
+> Go to https://discord.com/developers/applications/
+
+> Chose your discord bot
+
+> Chose `Bot`
+
+> Chose `Reset Token` and follow the directions, then copy the token
+
+> Go to `database/config.js`
+
+> Paste your clientId to variable named `clientId`
+
 ## Get Bing AI cookies:
 
 > Go to https://bing.com/chat
 
 > Run your cookies extension
 
-> Copy value of cookies named `_U`
+> Copy value of cookie named `_U`
 
 > Go to `database/config.json`
 
@@ -74,11 +88,11 @@ Using `npm install` for installing all node js package
 
 > Run your `cookies extension`
 
-> Copy all cookies to JSON to your clipboard
+> Copy values of cookies named `__Secure-1PSID` and `__Secure-1PSIDTS`
 
-> Go to `database/cookies.js`
+> Go to `database/config.json`
 
-> Paste your cookies to this file
+> Paste your cookies value to `__Secure_1PSID` and `__Secure_1PSIDTS`
 
 ## Get ffmpeg:
 

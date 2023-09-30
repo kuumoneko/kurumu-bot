@@ -1,7 +1,7 @@
 {
   "C_Cpp.errorSquiggles": "disabled",
 
-  "workbench.colorTheme": "Discord Theme",
+  "workbench.colorTheme": "Discord Theme (Dark)",
   "terminal.integrated.enableMultiLinePasteWarning": false,
 
   "workbench.editorAssociations": {
@@ -11,6 +11,7 @@
     "*.pyc": "default"
   },
   "git.enabled": true,
+
   
   "liveServer.settings.donotShowInfoMsg": true,
   "launch": {
@@ -38,10 +39,10 @@
   // "background.": false,
   "background.useFront": true,
   "background.customImages": [
-    "https://cdn.discordapp.com/attachments/1018816847333822474/1113819721125593128/20230131_223654010_iOS.jpg",
-    "https://cdn.discordapp.com/attachments/1018816847333822474/1113819721125593128/20230131_223654010_iOS.jpg",
-    "https://cdn.discordapp.com/attachments/1018816847333822474/1082588430464188487/moi.jpg",
-    "https://cdn.discordapp.com/attachments/1018816847333822474/1082588430464188487/moi.jpg"
+    "https://cdn.discordapp.com/attachments/1018816847333822474/1155989390535958528/eab0ee1cb135fb8e91a10dd110cddb06.jpg?ex=6515f983&is=6514a803&hm=b489df83f4bf52fb4688c18afefc14458ef52057796b98b95790eec76ddbe890&",
+    "https://cdn.discordapp.com/attachments/1018816847333822474/1155989390535958528/eab0ee1cb135fb8e91a10dd110cddb06.jpg?ex=6515f983&is=6514a803&hm=b489df83f4bf52fb4688c18afefc14458ef52057796b98b95790eec76ddbe890&",
+    "https://cdn.discordapp.com/attachments/1018816847333822474/1155989390535958528/eab0ee1cb135fb8e91a10dd110cddb06.jpg?ex=6515f983&is=6514a803&hm=b489df83f4bf52fb4688c18afefc14458ef52057796b98b95790eec76ddbe890&"
+
   ],
 
   "code-runner.runInTerminal": true,
