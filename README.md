@@ -22,6 +22,7 @@ Using `npm install` for installing all node js package
 ```json
 {
   "token": "Your-Bot-Token",
+  "prefix": "Your-prefix",
   "clientId": "Your-Bot-ClientId",
   "__Secure_1PSID": "Your-cookie-__Secure-1PSID",
   "__Secure_1PSIDTS": "Your-cookie-__Secure-1PSIDTS",
